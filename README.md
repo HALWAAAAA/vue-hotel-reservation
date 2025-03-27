@@ -22,5 +22,6 @@ Learn more about the recommended Project Setup and IDE Support in the [Vue Docs 
 
 ![image](https://github.com/user-attachments/assets/441d7c51-4dd9-4825-9307-99f39f205e7d)
 І от так кінцево виглядає свіжо доданий готель із фото
+Самі компоненти хаотично покидані, й є коментарі
 Фото з бази
 ![image](https://github.com/user-attachments/assets/40662649-3667-4fa8-b707-6e42716e7695)
