@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-vue-next';
-
+import { HOTEL_DETAILS_NAME } from '@/routerPath';
 defineProps<{
   hotel: {
     name: string;
@@ -40,7 +40,7 @@ function copy(name: string) {
       <DropdownMenuItem @click="$emit('expand')"> Expand </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem>View customer</DropdownMenuItem>
-      <RouterLink :to="`/hotels/${hotel.id}`">
+      <RouterLink :to="{ name: HOTEL_DETAILS_NAME, params: { id: hotel.id } }">
         <DropdownMenuItem> View hotel details </DropdownMenuItem>
       </RouterLink>
     </DropdownMenuContent>

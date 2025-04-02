@@ -4,44 +4,45 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
+} from '@/components/ui/dropdown-menu';
+import { HOME_ROUTE } from '@/routerPath';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-vue-next'
+} from '@/components/ui/sidebar';
+import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-vue-next';
 
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const props = defineProps<{
-  versions: string[]
-  defaultVersion: string
-}>()
+  versions: string[];
+  defaultVersion: string;
+}>();
 
-const selectedVersion = ref(props.defaultVersion)
+const selectedVersion = ref(props.defaultVersion);
 </script>
 
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
       <DropdownMenu>
-        <DropdownMenuTrigger as-child>
+        <RouterLink :to="HOME_ROUTE">
           <SidebarMenuButton
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <div
+              class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+            >
               <GalleryVerticalEnd class="size-4" />
             </div>
             <div class="flex flex-col gap-0.5 leading-none">
-              <span class="font-semibold">Documentation</span>
-              
+              <span class="font-semibold">Home</span>
             </div>
-            <ChevronsUpDown class="ml-auto" />
           </SidebarMenuButton>
-        </DropdownMenuTrigger>
+        </RouterLink>
+
         <DropdownMenuContent
           class="w-[--reka-dropdown-menu-trigger-width]"
           align="start"

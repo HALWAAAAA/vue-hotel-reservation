@@ -3,9 +3,9 @@ import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/components/firebase';
 
-import { columns } from './columns';
-import DataTable from '../hotels/data-table.vue';
-import type { Hotel } from './hotel';
+import { columns } from '../../components/hotels/columns';
+import DataTable from '../../components/hotels/data-table.vue';
+import type { Hotel } from '../../components/hotels/hotel';
 
 const hotels = ref<Hotel[]>([]);
 const handleDeleted = (ids: string[]) => {
