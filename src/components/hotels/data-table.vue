@@ -34,10 +34,11 @@ import {
 } from '@tanstack/vue-table';
 import { valueUpdater } from '@/lib/utils';
 import { useRouter } from 'vue-router';
+import { ADD_HOTEL_ROUTE } from '@/routerPath';
 const router = useRouter();
 
 const goToAddHotel = () => {
-  router.push('/admin/hotels/new');
+  router.push(ADD_HOTEL_ROUTE);
 };
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];

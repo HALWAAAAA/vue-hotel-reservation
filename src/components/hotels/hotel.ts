@@ -1,6 +1,6 @@
 export type Hotel = {
   id: string;
-  name: string; // ← назва готелю
+  name: string;
   area?: string;
   email: string;
   rooms: number;

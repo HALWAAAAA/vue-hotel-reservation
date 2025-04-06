@@ -5,9 +5,17 @@ import * as z from 'zod';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/components/firebase';
 import { useRouter } from 'vue-router';
+import { HOME_ROUTE } from '@/routerPath';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+
 import {
   FormField,
   FormItem,
@@ -70,24 +78,35 @@ const [lat] = defineField('lat');
 const [lng] = defineField('lng');
 const [rating] = defineField('rating');
 const [numberOfReviews] = defineField('numberOfReviews');
+const storage = getStorage();
 
 const onFileChange = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (!files || files.length === 0) return;
 
   const file = files[0];
-  const reader = new FileReader();
-  reader.onload = () => {
-    const url = reader.result as string;
+  const filePath = `hotel-images/${Date.now()}-${file.name}`;
+  const fileRef = storageRef(storage, filePath);
+
+  try {
+    await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(fileRef);
+
     const current = values.images || [];
-    setFieldValue('images', [...current, url]);
+    setFieldValue('images', [...current, downloadURL], true);
+
     toast({
-      title: 'Фото додано (тимчасово)',
-      description: 'Зображення відображається тільки для прев’ю',
-      variant: 'default',
+      title: 'Фото додано!',
+      description: 'Посилання збережене у форму',
     });
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('Помилка завантаження', err);
+    toast({
+      title: 'Помилка',
+      description: 'Не вдалося завантажити фото',
+      variant: 'destructive',
+    });
+  }
 };
 
 const onSubmit = handleSubmit(async (formValues) => {
@@ -105,7 +124,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       variant: 'default',
     });
     resetForm();
-    router.push('/');
+    router.push(HOME_ROUTE);
   } catch (err) {
     console.error('Помилка збереження:', err);
     toast({
