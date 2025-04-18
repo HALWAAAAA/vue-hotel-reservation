@@ -8,9 +8,8 @@
         <p><strong>Type:</strong> {{ hotel.type }}</p>
         <p><strong>Email:</strong> {{ hotel.email }}</p>
         <p><strong>Phone:</strong> {{ hotel.phone }}</p>
-        <p><strong>Area:</strong> {{ hotel.area }}</p>
-        <p><strong>State:</strong> {{ hotel.state }}</p>
-        <p><strong>Pincode:</strong> {{ hotel.pincode }}</p>
+        <p><strong>Address:</strong> {{ hotel.address }}</p>
+
         <p><strong>Description:</strong> {{ hotel.description }}</p>
         <p><strong>Rating:</strong> {{ hotel.rating }}</p>
         <p><strong>Number of Reviews:</strong> {{ hotel.numberOfReviews }}</p>
@@ -192,9 +191,7 @@ async function fetchHotelData() {
       type: { label: 'Тип', value: hotel.value.type || '' },
       email: { label: 'Email', value: hotel.value.email || '' },
       phone: { label: 'Телефон', value: hotel.value.phone || '' },
-      area: { label: 'Район', value: hotel.value.area || '' },
-      state: { label: 'Воєводство', value: hotel.value.state || '' },
-      pincode: { label: 'Поштовий індекс', value: hotel.value.pincode || '' },
+      address: { label: 'Адрес', value: hotel.value.area || '' },
       description: { label: 'Опис', value: hotel.value.description || '' },
       rating: { label: 'Рейтинг', value: hotel.value.rating || 1 },
       numberOfReviews: {
