@@ -38,9 +38,8 @@ const formSchema = toTypedSchema(
     description: z.string().optional(),
     email: z.string().email(),
     phone: z.string().min(6),
-    area: z.string().optional(),
-    state: z.string().optional(),
-    pincode: z.string().optional(),
+    address: z.string().optional(),
+
     lat: z.string().optional(),
     lng: z.string().optional(),
     images: z.array(z.string()).optional(),
@@ -71,9 +70,8 @@ const [type] = defineField('type');
 const [description] = defineField('description');
 const [email] = defineField('email');
 const [phone] = defineField('phone');
-const [area] = defineField('area');
-const [state] = defineField('state');
-const [pincode] = defineField('pincode');
+const [address] = defineField('address');
+
 const [lat] = defineField('lat');
 const [lng] = defineField('lng');
 const [rating] = defineField('rating');
@@ -110,7 +108,6 @@ const onFileChange = async (event: Event) => {
 };
 
 const onSubmit = handleSubmit(async (formValues) => {
-  console.log('SUBMIT', formValues);
   try {
     const cleanedValues = cleanFormValues(formValues);
     const docRef = await addDoc(collection(db, 'hotels'), {
@@ -196,29 +193,13 @@ const onSubmit = handleSubmit(async (formValues) => {
     </FormField>
 
     <div class="grid grid-cols-2 gap-4">
-      <FormField v-slot="{ componentField }" name="area">
+      <FormField v-slot="{ componentField }" name="address">
         <FormItem>
-          <FormLabel>Район</FormLabel>
+          <FormLabel>Адрес</FormLabel>
           <FormControl
-            ><Input placeholder="Śródmieście" v-bind="componentField"
-          /></FormControl>
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="state">
-        <FormItem>
-          <FormLabel>Воєводство</FormLabel>
-          <FormControl
-            ><Input placeholder="Mazowieckie" v-bind="componentField"
-          /></FormControl>
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="pincode">
-        <FormItem>
-          <FormLabel>Поштовий індекс</FormLabel>
-          <FormControl
-            ><Input placeholder="00-001" v-bind="componentField"
+            ><Input
+              placeholder="Lirowa 42, Warszawa, 02-641"
+              v-bind="componentField"
           /></FormControl>
         </FormItem>
       </FormField>

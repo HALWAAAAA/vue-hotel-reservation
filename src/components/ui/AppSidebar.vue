@@ -15,20 +15,21 @@ import {
   type SidebarProps,
   SidebarRail,
 } from '@/components/ui/sidebar';
-
+import { USER_HOME_ROUTE } from '@/routerPath';
+import { RouterLink } from 'vue-router';
 const props = defineProps<SidebarProps>();
 
 // This is sample data.
 const data = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
+  versions: ['12.'],
   navMain: [
     {
       title: 'Main page',
       url: '#',
       items: [
         {
-          title: 'Hotels',
-          url: '#',
+          title: 'User Page',
+          url: USER_HOME_ROUTE,
         },
         {
           title: 'Requests',
@@ -59,7 +60,9 @@ const data = {
               :key="childItem.title"
             >
               <SidebarMenuButton>
-                <a :href="childItem.url">{{ childItem.title }}</a>
+                <RouterLink :to="childItem.url" class="w-full block">
+                  {{ childItem.title }}
+                </RouterLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

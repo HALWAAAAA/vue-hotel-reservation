@@ -80,7 +80,6 @@ const onFileChange = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (!files || files.length === 0) return;
 
-  // Визначаємо індекс нової кімнати як кількість існуючих кімнат (якщо є)
   let currentIndex = 0;
   if (hotel.value?.rooms) {
     currentIndex = hotel.value.rooms.length;
@@ -114,7 +113,6 @@ const onFileChange = async (event: Event) => {
 };
 
 const onSubmit = handleSubmit(async (formValues) => {
-  console.log('SUBMIT', formValues);
   try {
     const hotelRef = doc(db, 'hotels', hotelId);
     await updateDoc(hotelRef, {
