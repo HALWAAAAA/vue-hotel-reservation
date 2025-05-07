@@ -10,8 +10,11 @@ export const FORM_ROOM_ROUTE = '/admin/hotels/:id/add-room';
 export const ADD_HOTEL_NAME = 'AddHotel';
 export const ADD_HOTEL_ROUTE = '/admin/hotels/new';
 
-export const USER_HOME_NAME = 'HomeUser'
-export const USER_HOME_ROUTE = '/home'
+export const USER_HOME_NAME = 'HomeUser';
+export const USER_HOME_ROUTE = '/home';
 
-export const USER_SEARCH_NAME = 'SearchResult'
-export const USER_SEARCH_ROUTE = '/home/:location'
+export const USER_SEARCH_NAME = 'SearchResult';
+export const USER_SEARCH_ROUTE = '/home/:location';
+
+export const USER_HOTEL_CARD_NAME = 'UserHotelDetail';
+export const USER_HOTEL_CARD_ROUTE = '/home/:location/:id';

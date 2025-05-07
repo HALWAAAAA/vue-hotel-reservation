@@ -39,7 +39,7 @@ const formSchema = toTypedSchema(
     email: z.string().email(),
     phone: z.string().min(6),
     address: z.string().optional(),
-
+    amenities: z.array(z.string()).optional(),
     lat: z.string().optional(),
     lng: z.string().optional(),
     images: z.array(z.string()).optional(),
@@ -61,9 +61,27 @@ const { handleSubmit, defineField, values, setFieldValue, resetForm } = useForm(
     initialValues: {
       images: [],
       freeCancellationUpto24h: false,
+      amenities: [],
     },
   }
 );
+
+const allAmenities = [
+  'Free Wi-Fi',
+  'Free breakfast',
+  'Free parking',
+  '24hr front desk',
+  'Swimming pool',
+  'Air conditioning',
+  'Fitness center',
+  'Room service',
+  'Tea/Coffee maker',
+  'Restaurant',
+  'Bar',
+  'Spa',
+  'Non-smoking rooms',
+  'Pet friendly',
+];
 
 const [name] = defineField('name');
 const [type] = defineField('type');
@@ -108,6 +126,8 @@ const onFileChange = async (event: Event) => {
 };
 
 const onSubmit = handleSubmit(async (formValues) => {
+  console.log('SUBMIT', formValues);
+
   try {
     const cleanedValues = cleanFormValues(formValues);
     const docRef = await addDoc(collection(db, 'hotels'), {
@@ -258,6 +278,32 @@ const onSubmit = handleSubmit(async (formValues) => {
         <FormControl
           ><Input type="number" placeholder="0" v-bind="componentField"
         /></FormControl>
+      </FormItem>
+    </FormField>
+
+    <FormField name="amenities" v-slot>
+      <FormItem>
+        <FormLabel>Зручності</FormLabel>
+        <FormControl>
+          <div class="grid grid-cols-2 gap-2">
+            <label
+              v-for="amenity in allAmenities"
+              :key="amenity"
+              class="flex items-center gap-2 text-sm"
+            >
+              <Field
+                name="amenities"
+                type="checkbox"
+                :value="amenity"
+                v-slot="{ field, handleChange }"
+              >
+                <input type="checkbox" v-bind="field" @change="handleChange" />
+              </Field>
+              <span>{{ amenity }}</span>
+            </label>
+          </div>
+        </FormControl>
+        <FormMessage name="amenities" />
       </FormItem>
     </FormField>
 

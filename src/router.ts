@@ -7,6 +7,7 @@ import FormRoom from '@/pages/hotels/FormRoom.vue';
 import AddHotel from '@/pages/hotels/AddHotel.vue';
 import Home from '../src/pages/user/Home.vue';
 import SearchResult from './pages/user/SearchResult.vue';
+import UserHotelDetail from './pages/user/UserHotelDetail.vue';
 
 import {
   HOME_NAME,
@@ -20,7 +21,9 @@ import {
   USER_HOME_NAME,
   USER_HOME_ROUTE,
   USER_SEARCH_NAME,
-  USER_SEARCH_ROUTE
+  USER_SEARCH_ROUTE,
+  USER_HOTEL_CARD_NAME,
+  USER_HOTEL_CARD_ROUTE,
 } from './routerPath';
 
 const routes = [
@@ -62,6 +65,13 @@ const routes = [
     path: USER_SEARCH_ROUTE,
     name: USER_SEARCH_NAME,
     component: SearchResult,
+    meta: { layout: 'user' },
+  },
+
+  {
+    path: USER_HOTEL_CARD_ROUTE,
+    name: USER_HOTEL_CARD_NAME,
+    component: UserHotelDetail,
     meta: { layout: 'user' },
   },
 ];

@@ -57,6 +57,21 @@
                     <span class="text-sm"
                       >Безкоштовне скасування до 24 год</span
                     >
+                  </div> </template
+                ><template v-else-if="key === 'amenities'">
+                  <div class="grid grid-cols-2 gap-2 mt-1">
+                    <label
+                      v-for="amenity in allAmenities"
+                      :key="amenity"
+                      class="flex items-center gap-2 text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        :value="amenity"
+                        v-model="editableFields[key].value"
+                      />
+                      <span>{{ amenity }}</span>
+                    </label>
                   </div>
                 </template>
                 <template v-else>
@@ -168,7 +183,22 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import RoomDetail from '../../components/hotels/RoomDetail.vue';
-
+const allAmenities = [
+  'Free Wi-Fi',
+  'Free breakfast',
+  'Free parking',
+  '24hr front desk',
+  'Swimming pool',
+  'Air conditioning',
+  'Fitness center',
+  'Room service',
+  'Tea/Coffee maker',
+  'Restaurant',
+  'Bar',
+  'Spa',
+  'Non-smoking rooms',
+  'Pet friendly',
+];
 const route = useRoute();
 const hotelId = route.params.id as string;
 const hotel = ref<any | null>(null);
@@ -191,7 +221,7 @@ async function fetchHotelData() {
       type: { label: 'Тип', value: hotel.value.type || '' },
       email: { label: 'Email', value: hotel.value.email || '' },
       phone: { label: 'Телефон', value: hotel.value.phone || '' },
-      address: { label: 'Адрес', value: hotel.value.area || '' },
+      address: { label: 'Адрес', value: hotel.value.address || '' },
       description: { label: 'Опис', value: hotel.value.description || '' },
       rating: { label: 'Рейтинг', value: hotel.value.rating || 1 },
       numberOfReviews: {
@@ -202,6 +232,10 @@ async function fetchHotelData() {
         label: 'Скасування до 24 год',
         value: hotel.value.freeCancellationUpto24h ?? false,
       },
+    };
+    editableFields.value.amenities = {
+      label: 'Зручності',
+      value: hotel.value.amenities ? [...hotel.value.amenities] : [],
     };
   }
 }

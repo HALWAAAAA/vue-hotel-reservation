@@ -32,9 +32,12 @@
           <p class="text-blue-600 font-semibold text-lg">
             $ {{ hotel.rooms[0].basePrice }}/night
           </p>
-          <button class="mt-2 px-4 py-1 border rounded bg-blue-600 text-white">
+          <RouterLink
+            :to="{ name: USER_HOTEL_CARD_NAME, params: { id: hotel.id } }"
+            class="mt-2 inline-block px-4 py-1 border rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+          >
             View Place
-          </button>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -42,7 +45,9 @@
 </template>
 
 <script setup>
+import { RouterLink } from 'vue-router';
 import Button from '../ui/button/Button.vue';
+import { USER_HOTEL_CARD_NAME } from '@/routerPath';
 defineProps({
   hotel: {
     type: Object,

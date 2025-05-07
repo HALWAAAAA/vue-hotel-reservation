@@ -33,9 +33,9 @@
 
       <div class="flex-1">
         <p class="text-sm text-gray-500 mb-5">
-          Showing {{ hotels.length }} results
+          Showing {{ store.hotels.length }} results
         </p>
-        <HotelList :hotels="hotels" />
+        <HotelList :hotels="store.hotels" />
       </div>
     </div>
   </div>
@@ -51,16 +51,13 @@ import HotelFilters from '@/components/user/HotelFilters.vue';
 import HotelList from '@/components/user/HotelList.vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/components/firebase';
-
+import { useHotelStore } from '@/store/hotelStore';
+const store = useHotelStore();
 const location = ref('');
-const hotels = ref([]);
+
 const total = ref(0);
 
-onMounted(async () => {
-  const snapshot = await getDocs(collection(db, 'hotels'));
-  hotels.value = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+onMounted(() => {
+  store.loadHotels();
 });
 </script>
