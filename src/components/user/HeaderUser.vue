@@ -37,57 +37,37 @@
       <div
         class="bg-white rounded-lg shadow-lg px-6 py-6 flex flex-col gap-4 text-gray-800 w-full max-w-4xl"
       >
-        <div class="flex flex-wrap md:flex-nowrap gap-4 w-full">
-          <div class="flex flex-col flex-1 min-w-[200px]">
-            <Label for="location" class="font-medium mb-3.5">Location</Label>
-            <Input
-              type="text"
-              id="location"
-              placeholder="Where are you going?"
-              class="px-4 py-2 rounded border"
-              v-model="location"
-            />
-          </div>
-          <div class="flex flex-col flex-1 min-w-[200px]">
-            <Label for="dates" class="font-medium mb-3.5">Dates</Label>
-            <PickDate id="dates" />
-          </div>
-          <div class="flex flex-col flex-1 min-w-[200px]">
-            <label class="font-medium mb-1" for="guests">Guests</label>
-            <SelectPeople id="guests" />
-          </div>
-        </div>
-
-        <Button
-          class="bg-cyan-500 hover:bg-cyan-600 text-white w-full py-3 rounded-md transition"
-          @click="handleSearch"
-        >
-          Search
-        </Button>
+        <SearchBar />
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import bgImage from '@/assets/backMain.jpg';
 import { Button } from '@/components/ui/button';
-import PickDate from '../ui/MyUi/PickDate.vue';
+
 import { Input } from '../ui/input';
 import { Label } from '@/components/ui/label';
 import SelectPeople from '../ui/MyUi/SelectPeople.vue';
+import { useHotelStore } from '@/store/hotelStore';
+import SearchBar from '../ui/MyUi/SearchBar.vue';
 
+const store = useHotelStore();
 const location = ref('');
 const router = useRouter();
+const startDate = ref('');
+const endDate = ref('');
+watch([startDate, endDate], ([s, e]) => store.setDateRange(s, e));
 
 function handleSearch() {
   const trimmed = location.value.trim();
 
   if (trimmed) {
-    const encodedLocation = encodeURIComponent(trimmed.toLowerCase());
-    router.push(`/home/${encodedLocation}`);
+    store.setLocationSearch(trimmed);
+    router.push(`/home/${encodeURIComponent(trimmed)}`);
   } else {
     alert('Please enter a location');
   }

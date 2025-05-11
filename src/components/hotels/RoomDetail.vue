@@ -1,104 +1,3 @@
-<template>
-  <div v-if="room">
-    <div class="space-y-1">
-      <p><strong>Тип розміщення:</strong> {{ room.accommodationType }}</p>
-      <p><strong>Доступна:</strong> {{ room.available ? 'Так' : 'Ні' }}</p>
-      <p><strong>Ціна за ніч:</strong> {{ room.basePrice }}</p>
-      <p><strong>Загальна площа:</strong> {{ room.propertySize }}</p>
-      <p><strong>Площа кімнати:</strong> {{ room.roomArea }}</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-2 mt-4">
-      <img
-        v-for="(img, i) in roomImages"
-        :key="i"
-        :src="img"
-        class="w-full h-40 object-cover rounded"
-      />
-    </div>
-    <Dialog v-model:open="dialogOpen">
-      <DialogTrigger as-child>
-        <Button variant="outline" class="mt-4"> Редагувати кімнату </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Редагувати кімнату</DialogTitle>
-          <DialogDescription>
-            Змініть потрібні поля та збережіть
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea class="max-h-[50vh] pr-4">
-          <form @submit.prevent="updateRoom" class="space-y-3 pb-6">
-            <Label for="accommodationType">Тип розміщення</Label>
-            <Input
-              id="accommodationType"
-              v-model="editFields.accommodationType"
-              placeholder="Single / Deluxe"
-            />
-
-            <Label for="basePrice">Ціна за ніч</Label>
-            <Input
-              id="basePrice"
-              type="number"
-              v-model="editFields.basePrice"
-            />
-
-            <Label for="propertySize">Загальна площа</Label>
-            <Input
-              id="propertySize"
-              type="number"
-              v-model="editFields.propertySize"
-            />
-
-            <div class="flex items-center gap-2">
-              <Checkbox v-model="editFields.available" />
-
-              <span>Доступна</span>
-            </div>
-
-            <div>
-              <Label>Фото</Label>
-              <div class="flex flex-wrap gap-2 mt-1">
-                <div
-                  v-for="(img, index) in roomImages"
-                  :key="index"
-                  class="relative"
-                >
-                  <img :src="img" class="w-20 h-20 object-cover rounded" />
-                  <button
-                    type="button"
-                    @click="removeRoomImage(index)"
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                  >
-                    ×
-                  </button>
-                </div>
-              </div>
-              <input
-                type="file"
-                @change="handleRoomFileUpload"
-                accept="image/*"
-                class="mt-2"
-              />
-              <Button type="button" @click="uploadRoomImage" class="mt-2">
-                Додати фото
-              </Button>
-            </div>
-
-            <DialogFooter class="pt-4">
-              <Button type="submit">Зберегти</Button>
-            </DialogFooter>
-          </form>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
-
-    <Button variant="destructive" class="mt-4" @click="deleteRoom">
-      Видалити кімнату
-    </Button>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, defineEmits } from 'vue';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -124,12 +23,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '../ui/checkbox';
+import { Field } from 'vee-validate';
+
 const props = defineProps<{
   hotelId: string;
   roomIndex: number;
 }>();
-
 const emit = defineEmits(['room-updated']);
 
 const dialogOpen = ref(false);
@@ -140,8 +39,9 @@ const newRoomImageFile = ref<File | null>(null);
 const editFields = ref({
   accommodationType: '',
   basePrice: 0,
-  propertySize: 0,
-  available: false,
+  maxGuests: 1,
+  startDate: '',
+  endDate: '',
 });
 
 const room = computed(() => {
@@ -159,11 +59,15 @@ async function fetchHotelData() {
 
 function initRoomData() {
   roomImages.value = [...(room.value.images || [])];
+
+  const hasRange =
+    Array.isArray(room.value.available) && room.value.available.length > 0;
   editFields.value = {
     accommodationType: room.value.accommodationType || '',
     basePrice: room.value.basePrice || 0,
-    propertySize: room.value.propertySize || 0,
-    available: !!room.value.available,
+    maxGuests: room.value.maxGuests || 1,
+    startDate: room.value.startDate || '',
+    endDate: room.value.endDate || '',
   };
 }
 
@@ -255,8 +159,9 @@ async function updateRoom() {
     await updateRoomInFirestore({
       accommodationType: editFields.value.accommodationType,
       basePrice: editFields.value.basePrice,
-      propertySize: editFields.value.propertySize,
-      available: editFields.value.available,
+      maxGuests: editFields.value.maxGuests,
+      startDate: editFields.value.startDate,
+      endDate: editFields.value.endDate,
     });
     toast({ title: 'Успіх', description: 'Кімнату оновлено' });
     dialogOpen.value = false;
@@ -298,3 +203,107 @@ async function deleteRoom() {
   }
 }
 </script>
+
+<template>
+  <div v-if="room">
+    <div class="space-y-1">
+      <p><strong>Тип розміщення:</strong> {{ room.accommodationType }}</p>
+
+      <p><strong>Ціна за ніч:</strong> {{ room.basePrice }}</p>
+      <p><strong>Max guests:</strong> {{ room.maxGuests }}</p>
+      <p>
+        <strong>Available:</strong>
+        <template v-if="room.startDate">
+          {{ room.startDate }} – {{ room.endDate }}
+        </template>
+        <template v-else>—</template>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 mt-4">
+      <img
+        v-for="(img, i) in roomImages"
+        :key="i"
+        :src="img"
+        class="w-full h-40 object-cover rounded"
+      />
+    </div>
+    <Dialog v-model:open="dialogOpen">
+      <DialogTrigger as-child>
+        <Button variant="outline" class="mt-4"> Редагувати кімнату </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Редагувати кімнату</DialogTitle>
+          <DialogDescription>
+            Змініть потрібні поля та збережіть
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea class="max-h-[50vh] pr-4">
+          <form @submit.prevent="updateRoom" class="space-y-3 pb-6">
+            <Label for="accommodationType">Тип розміщення</Label>
+            <Input
+              id="accommodationType"
+              v-model="editFields.accommodationType"
+              placeholder="Single / Deluxe"
+            />
+
+            <Label for="basePrice">Ціна за ніч</Label>
+            <Input
+              id="basePrice"
+              type="number"
+              v-model="editFields.basePrice"
+            />
+
+            <Label>Max guests</Label>
+            <Input type="number" v-model="editFields.maxGuests" />
+
+            <Label>From</Label>
+            <Input type="date" v-model="editFields.startDate" />
+
+            <Label>To</Label>
+            <Input type="date" v-model="editFields.endDate" />
+
+            <div>
+              <Label>Фото</Label>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <div
+                  v-for="(img, index) in roomImages"
+                  :key="index"
+                  class="relative"
+                >
+                  <img :src="img" class="w-20 h-20 object-cover rounded" />
+                  <button
+                    type="button"
+                    @click="removeRoomImage(index)"
+                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              <input
+                type="file"
+                @change="handleRoomFileUpload"
+                accept="image/*"
+                class="mt-2"
+              />
+              <Button type="button" @click="uploadRoomImage" class="mt-2">
+                Додати фото
+              </Button>
+            </div>
+
+            <DialogFooter class="pt-4">
+              <Button type="submit">Зберегти</Button>
+            </DialogFooter>
+          </form>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+
+    <Button variant="destructive" class="mt-4" @click="deleteRoom">
+      Видалити кімнату
+    </Button>
+  </div>
+</template>
+
