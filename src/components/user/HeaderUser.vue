@@ -13,15 +13,27 @@
       </h2>
 
       <nav class="flex items-center space-x-8 text-white font-medium">
-        <h3 class="hover:text-cyan-300 transition cursor-pointer">About Us</h3>
-        <h3 class="hover:text-cyan-300 transition cursor-pointer">
-          Contact Us
-        </h3>
-        <h3 class="hover:text-cyan-300 transition cursor-pointer">Log In</h3>
+        <template v-if="!auth.isLoggedIn">
+          <RouterLink
+            :to="{ name: USER_LOGIN_NAME }"
+            class="hover:text-cyan-300 transition cursor-pointer"
+          >
+            Log In
+          </RouterLink>
+          <RouterLink
+            :to="{ name: USER_REGISTER_NAME }"
+            class="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-2 rounded-md transition"
+          >
+            Sign Up
+          </RouterLink>
+        </template>
+
         <Button
+          v-else
+          @click="auth.logout"
           class="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-2 rounded-md transition"
         >
-          Sign Up
+          Sign Out
         </Button>
       </nav>
     </header>
@@ -43,28 +55,32 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import bgImage from '@/assets/backMain.jpg';
 import { Button } from '@/components/ui/button';
-
 import { Input } from '../ui/input';
 import { Label } from '@/components/ui/label';
 import SelectPeople from '../ui/MyUi/SelectPeople.vue';
-import { useHotelStore } from '@/store/hotelStore';
 import SearchBar from '../ui/MyUi/SearchBar.vue';
+import { useHotelStore } from '@/store/hotelStore';
+
+import { useAuthStore } from '@/store/authStore';
+import { USER_LOGIN_NAME, USER_REGISTER_NAME } from '@/routerPath';
 
 const store = useHotelStore();
-const location = ref('');
 const router = useRouter();
+const location = ref('');
 const startDate = ref('');
 const endDate = ref('');
+
+const auth = useAuthStore();
+
 watch([startDate, endDate], ([s, e]) => store.setDateRange(s, e));
 
 function handleSearch() {
   const trimmed = location.value.trim();
-
   if (trimmed) {
     store.setLocationSearch(trimmed);
     router.push(`/home/${encodeURIComponent(trimmed)}`);

@@ -82,10 +82,10 @@ const allAmenities = [
   'Non-smoking rooms',
   'Pet friendly',
   'Paid breakfast',
-  'Paid parking' ,
+  'Paid parking',
   'Business center',
   'Child friendly',
-  'Laundry'   
+  'Laundry',
 ];
 
 const [name] = defineField('name');
@@ -121,7 +121,6 @@ const onFileChange = async (event: Event) => {
       description: 'Посилання збережене у форму',
     });
   } catch (err) {
-    console.error('Помилка завантаження', err);
     toast({
       title: 'Помилка',
       description: 'Не вдалося завантажити фото',
@@ -131,8 +130,6 @@ const onFileChange = async (event: Event) => {
 };
 
 const onSubmit = handleSubmit(async (formValues) => {
-  console.log('SUBMIT', formValues);
-
   try {
     const cleanedValues = cleanFormValues(formValues);
     const docRef = await addDoc(collection(db, 'hotels'), {
@@ -148,7 +145,6 @@ const onSubmit = handleSubmit(async (formValues) => {
     resetForm();
     router.push(HOME_ROUTE);
   } catch (err) {
-    console.error('Помилка збереження:', err);
     toast({
       title: 'Помилка',
       description: 'Не вдалося зберегти готель. Спробуйте ще раз.',

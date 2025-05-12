@@ -94,7 +94,6 @@ const onFileChange = async (event: Event) => {
       description: 'Посилання збережене у форму',
     });
   } catch (err) {
-    console.error('Помилка завантаження', err);
     toast({
       title: 'Помилка',
       description: 'Не вдалося завантажити фото',
