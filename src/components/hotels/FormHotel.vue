@@ -81,6 +81,11 @@ const allAmenities = [
   'Spa',
   'Non-smoking rooms',
   'Pet friendly',
+  'Paid breakfast',
+  'Paid parking' ,
+  'Business center',
+  'Child friendly',
+  'Laundry'   
 ];
 
 const [name] = defineField('name');

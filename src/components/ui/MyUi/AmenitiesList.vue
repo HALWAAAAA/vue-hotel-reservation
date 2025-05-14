@@ -1,4 +1,3 @@
-<!-- src/components/AmenitiesList.vue -->
 <template>
   <div v-if="amenitiesToShow.length" class="border-t pt-8 mt-8">
     <h2 class="text-xl font-semibold mb-4">Amenities</h2>
@@ -27,7 +26,6 @@ import { Icon } from '@iconify/vue';
 
 const props = defineProps<{ amenities: string[] | undefined }>();
 
-/* Показуємо всі, без «+24 more» */
 const amenitiesToShow = computed(() => props.amenities ?? []);
 
 const amenityIcons: Record<string, string> = {
@@ -45,6 +43,11 @@ const amenityIcons: Record<string, string> = {
   Spa: 'mdi:spa-outline',
   'Non-smoking rooms': 'mdi:smoke-off',
   'Pet friendly': 'mdi:dog',
+  'Paid breakfast': 'mdi:coffee-outline',
+  'Paid parking': 'mdi:parking',
+  'Business center': 'mdi:briefcase-outline',
+  'Child friendly': 'mdi:human-baby-changing-table',
+  Laundry: 'mdi:washing-machine',
 };
 const fallbackIcon = 'mdi:check-circle-outline';
 </script>

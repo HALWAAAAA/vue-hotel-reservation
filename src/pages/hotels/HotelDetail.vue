@@ -9,7 +9,6 @@
         <p><strong>Email:</strong> {{ hotel.email }}</p>
         <p><strong>Phone:</strong> {{ hotel.phone }}</p>
         <p><strong>Address:</strong> {{ hotel.address }}</p>
-
         <p><strong>Description:</strong> {{ hotel.description }}</p>
         <p><strong>Rating:</strong> {{ hotel.rating }}</p>
         <p><strong>Number of Reviews:</strong> {{ hotel.numberOfReviews }}</p>
@@ -58,7 +57,7 @@
                       >Безкоштовне скасування до 24 год</span
                     >
                   </div> </template
-                ><template v-else-if="key === 'amenities'">
+                ><template v-else-if="key === AMENITIES_KEY">
                   <div class="grid grid-cols-2 gap-2 mt-1">
                     <label
                       v-for="amenity in allAmenities"
@@ -198,12 +197,18 @@ const allAmenities = [
   'Spa',
   'Non-smoking rooms',
   'Pet friendly',
+  'Paid breakfast',
+  'Paid parking',
+  'Business center',
+  'Child friendly',
+  'Laundry',
 ];
 const route = useRoute();
 const hotelId = route.params.id as string;
 const hotel = ref<any | null>(null);
 const dialogOpen = ref(false);
 const images = ref<string[]>([]);
+const AMENITIES_KEY = 'amenities';
 const editableFields = ref<
   Record<string, { label: string; value: any; placeholder?: string }>
 >({});

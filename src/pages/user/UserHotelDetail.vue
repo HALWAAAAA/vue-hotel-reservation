@@ -129,7 +129,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { useHotelStore } from '@/store/hotelStore';
 import HotelMap from '@/components/ui/MyUi/HotelMap.vue';
 import AmenitiesList from '@/components/ui/MyUi/AmenitiesList.vue';
@@ -141,20 +141,25 @@ const store = useHotelStore();
 const hotel = ref(null);
 const mainImage = ref('');
 const imageList = ref([]);
-
-onMounted(async () => {
-  const id = route.params.id;
+async function loadHotelData(id) {
   const data = store.getHotelById(id) || (await store.fetchHotelById(id));
-  console.log('hotel from store →', data);
   hotel.value = data;
   imageList.value = data?.images || [];
   mainImage.value = imageList.value[0] || '/fallback.jpg';
+}
+
+onMounted(() => {
+  loadHotelData(route.params.id);
+});
+
+onBeforeRouteUpdate((to, from, next) => {
+  loadHotelData(to.params.id);
+  next();
 });
 
 function swapImages(index) {
-  const currentMain = mainImage.value;
-  const newImage = imageList.value[index];
-  mainImage.value = newImage;
-  imageList.value[index] = currentMain;
+  const temp = mainImage.value;
+  mainImage.value = imageList.value[index];
+  imageList.value[index] = temp;
 }
 </script>
