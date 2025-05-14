@@ -42,7 +42,6 @@ export const useHotelStore = defineStore('hotel', () => {
 
     try {
       const snap = await getDocs(collection(db, 'hotels'));
-      console.log('Firebase snapshot length:', snap.docs.length);
 
       hotels.value = snap.docs.map((d) => {
         const data: any = d.data();
@@ -54,12 +53,6 @@ export const useHotelStore = defineStore('hotel', () => {
           : Infinity;
 
         const hotel = { id: d.id, ...data };
-        console.log(
-          'Hotel loaded:',
-          hotel.name,
-          '| fromPrice:',
-          hotel.fromPrice
-        );
         return hotel;
       });
 
@@ -68,7 +61,6 @@ export const useHotelStore = defineStore('hotel', () => {
       );
       filters.value.priceRange = [maxPrice];
     } catch (err) {
-      console.error(err);
       error.value = 'Failed to load hotels';
     } finally {
       loading.value = false;

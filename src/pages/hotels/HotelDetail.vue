@@ -278,7 +278,6 @@ const uploadNewImage = async () => {
     toast({ title: 'Успіх', description: 'Фото завантажено та збережено' });
     newImageFile.value = null;
   } catch (error) {
-    console.error(error);
     toast({
       title: 'Помилка',
       description: 'Не вдалося завантажити фото',
@@ -309,7 +308,6 @@ const removeImage = async (index: number) => {
     });
     toast({ title: 'Успіх', description: 'Фото видалено' });
   } catch (error) {
-    console.error(error);
     toast({
       title: 'Помилка',
       description: 'Не вдалося видалити фото',

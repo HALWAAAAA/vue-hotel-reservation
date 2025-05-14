@@ -117,7 +117,6 @@ async function uploadRoomImage() {
     toast({ title: 'Успіх', description: 'Фото завантажено' });
     newRoomImageFile.value = null;
   } catch (error) {
-    console.error(error);
     toast({ title: 'Помилка', description: 'Не вдалося завантажити фото' });
   }
 }
@@ -145,7 +144,6 @@ async function removeRoomImage(index: number) {
     });
     toast({ title: 'Успіх', description: 'Фото видалено' });
   } catch (error) {
-    console.error(error);
     toast({
       title: 'Помилка',
       description: 'Не вдалося видалити фото',
@@ -166,7 +164,6 @@ async function updateRoom() {
     toast({ title: 'Успіх', description: 'Кімнату оновлено' });
     dialogOpen.value = false;
   } catch (error) {
-    console.error(error);
     toast({ title: 'Помилка', description: 'Не вдалося оновити кімнату' });
   }
 }
@@ -198,7 +195,6 @@ async function deleteRoom() {
     toast({ title: 'Успіх', description: 'Кімнату видалено' });
     emit('room-updated');
   } catch (error) {
-    console.error(error);
     toast({ title: 'Помилка', description: 'Не вдалося видалити кімнату' });
   }
 }
@@ -306,4 +302,3 @@ async function deleteRoom() {
     </Button>
   </div>
 </template>
-

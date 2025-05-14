@@ -18,3 +18,9 @@ export const USER_SEARCH_ROUTE = '/home/:location';
 
 export const USER_HOTEL_CARD_NAME = 'UserHotelDetail';
 export const USER_HOTEL_CARD_ROUTE = '/home/:location/:id';
+
+export const USER_LOGIN_NAME = 'Login';
+export const USER_LOGIN_ROUTE = '/home/login';
+
+export const USER_REGISTER_NAME = 'Register';
+export const USER_REGISTER_ROUTE = '/home/register';

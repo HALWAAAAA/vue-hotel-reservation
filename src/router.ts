@@ -1,6 +1,8 @@
 // src/router.ts
 import { createRouter, createWebHistory } from 'vue-router';
-
+import { getCurrentUser } from 'vuefire';
+import { signOut } from 'firebase/auth';
+import { auth } from './components/firebase';
 import Hotel from './pages/hotels/Hotel.vue';
 import HotelDetail from '@/pages/hotels/HotelDetail.vue';
 import FormRoom from '@/pages/hotels/FormRoom.vue';
@@ -8,6 +10,8 @@ import AddHotel from '@/pages/hotels/AddHotel.vue';
 import Home from '../src/pages/user/Home.vue';
 import SearchResult from './pages/user/SearchResult.vue';
 import UserHotelDetail from './pages/user/UserHotelDetail.vue';
+import Register from './pages/user/Register.vue';
+import Login from './pages/user/Login.vue';
 
 import {
   HOME_NAME,
@@ -24,14 +28,20 @@ import {
   USER_SEARCH_ROUTE,
   USER_HOTEL_CARD_NAME,
   USER_HOTEL_CARD_ROUTE,
+  USER_LOGIN_NAME,
+  USER_LOGIN_ROUTE,
+  USER_REGISTER_NAME,
+  USER_REGISTER_ROUTE,
 } from './routerPath';
+
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
 const routes = [
   {
     path: HOME_ROUTE,
     name: HOME_NAME,
     component: Hotel,
-    meta: { layout: 'admin' },
+    meta: { layout: 'admin', requiresAdmin: true },
   },
   {
     path: '/',
@@ -65,7 +75,7 @@ const routes = [
     path: USER_SEARCH_ROUTE,
     name: USER_SEARCH_NAME,
     component: SearchResult,
-    meta: { layout: 'user' },
+    meta: { layout: 'user'},
   },
 
   {
@@ -74,10 +84,46 @@ const routes = [
     component: UserHotelDetail,
     meta: { layout: 'user' },
   },
+  {
+    path: USER_REGISTER_ROUTE,
+    name: USER_REGISTER_NAME,
+    component: Register,
+    meta: { layout: 'user' },
+  },
+  {
+    path: USER_LOGIN_ROUTE,
+    name: USER_LOGIN_NAME,
+    component: Login,
+    meta: { layout: 'user' },
+  },
+  // {
+  //   path: USER_LOGIN_ROUTE,
+  //   name: USER_LOGIN_NAME,
+  //   component: Login,
+  //   meta: { layout: 'user', requiresAuth: true },
+  // },
 ];
 
 export const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach(async (to) => {
+  if (to.meta.requiresAuth) {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return { name: USER_LOGIN_NAME };
+  }
+
+  if (to.meta.requiresAdmin) {
+    const user = await getCurrentUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      await signOut(auth);
+
+      return { name: USER_LOGIN_NAME };
+    }
+  }
+});
+
 export default router;
