@@ -28,10 +28,6 @@
           </div>
         </div>
 
-        <p v-if="error" class="text-red-500 text-sm mt-2">
-          Wrong email or password
-        </p>
-
         <button
           type="submit"
           :disabled="loading"
@@ -47,20 +43,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { auth } from '@/components/firebase';
+import { auth, db } from '@/components/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { HOME_NAME, USER_HOME_NAME } from '@/routerPath';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/components/ui/toast/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { h } from 'vue';
 
 const email = ref('');
 const password = ref('');
-const error = ref<string | null>(null);
 const loading = ref(false);
 const router = useRouter();
-
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL as string;
+const { toast } = useToast();
+const authStore = useAuthStore();
 
 async function onLogin() {
-  error.value = null;
   loading.value = true;
   try {
     const cred = await signInWithEmailAndPassword(
@@ -70,13 +69,27 @@ async function onLogin() {
     );
     const user = cred.user;
 
-    if (user.email === ADMIN_EMAIL) {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    const data = snap.data() || {};
+    const isAdmin = data.isAdmin === true;
+    authStore.setAdmin(isAdmin);
+
+    if (isAdmin) {
       router.push({ name: HOME_NAME });
     } else {
       router.push({ name: USER_HOME_NAME });
     }
   } catch (e: any) {
-    error.value = e.message;
+    toast({
+      title: 'Помилка',
+      description: 'Wrong email or password',
+      variant: 'destructive',
+      action: h(
+        ToastAction,
+        { altText: 'Добре' },
+        { default: () => 'Закрити' }
+      ),
+    });
   } finally {
     loading.value = false;
   }

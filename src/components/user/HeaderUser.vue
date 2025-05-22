@@ -1,5 +1,11 @@
 <template>
-  <section
+  <div
+    v-if="auth.loading"
+    class="fixed inset-0 flex items-center justify-center bg-white z-50"
+  >
+    <Spinner class="h-12 w-12" />
+  </div>
+  <section v-else
     class="py-32 bg-cover bg-center relative"
     :style="{ backgroundImage: `url(${bgImage})` }"
   >
@@ -11,8 +17,8 @@
       <h2 class="text-white text-2xl font-semibold">
         Hotel <span class="bg-cyan-500 text-white px-2 py-1 rounded">hub</span>
       </h2>
-
-      <nav class="flex items-center space-x-8 text-white font-medium">
+       
+      <nav  class="flex items-center space-x-8 text-white font-medium">
         <template v-if="!auth.isLoggedIn">
           <RouterLink
             :to="{ name: USER_LOGIN_NAME }"
@@ -28,13 +34,28 @@
           </RouterLink>
         </template>
 
-        <Button
-          v-else
-          @click="auth.logout"
-          class="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-2 rounded-md transition"
-        >
-          Sign Out
-        </Button>
+        <template v-else>
+          <RouterLink
+            :to="{ name: USER_PROFILE_NAME }"
+            class="hover:text-cyan-300 transition cursor-pointer"
+          >
+            Profile
+          </RouterLink>
+
+          <RouterLink
+            :to="{ name: USER_FOLLOWED_NAME }"
+            class="hover:text-cyan-300 transition cursor-pointer"
+          >
+            Followed
+          </RouterLink>
+
+          <Button
+            @click="auth.logout"
+            class="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-2 rounded-md transition"
+          >
+            Sign Out
+          </Button>
+        </template>
       </nav>
     </header>
 
@@ -65,16 +86,24 @@ import { Label } from '@/components/ui/label';
 import SelectPeople from '../ui/MyUi/SelectPeople.vue';
 import SearchBar from '../ui/MyUi/SearchBar.vue';
 import { useHotelStore } from '@/store/hotelStore';
-
+import { useToast } from '@/components/ui/toast/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { h } from 'vue';
 import { useAuthStore } from '@/store/authStore';
-import { USER_LOGIN_NAME, USER_REGISTER_NAME } from '@/routerPath';
+import {
+  USER_LOGIN_NAME,
+  USER_REGISTER_NAME,
+  USER_SEARCH_NAME,
+  USER_PROFILE_NAME,
+  USER_FOLLOWED_NAME,
+} from '@/routerPath';
 
 const store = useHotelStore();
 const router = useRouter();
 const location = ref('');
 const startDate = ref('');
 const endDate = ref('');
-
+const { toast } = useToast();
 const auth = useAuthStore();
 
 watch([startDate, endDate], ([s, e]) => store.setDateRange(s, e));
@@ -83,9 +112,21 @@ function handleSearch() {
   const trimmed = location.value.trim();
   if (trimmed) {
     store.setLocationSearch(trimmed);
-    router.push(`/home/${encodeURIComponent(trimmed)}`);
+    router.push({
+      name: USER_SEARCH_NAME,
+      params: { location: trimmed },
+    });
   } else {
-    alert('Please enter a location');
+    toast({
+      title: 'Нічого не вибрано',
+      description: 'Вибери готелі для видалення',
+      variant: 'destructive',
+      action: h(
+        ToastAction,
+        { altText: 'Добре' },
+        { default: () => 'Закрити' }
+      ),
+    });
   }
 }
 </script>

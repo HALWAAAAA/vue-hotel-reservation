@@ -6,6 +6,7 @@ import { router } from './router';
 import { firebaseApp, auth } from './components/firebase/index.ts';
 import { VueFire, VueFireFirestoreOptionsAPI, VueFireAuth } from 'vuefire';
 import 'leaflet/dist/leaflet.css';
+import Spinner from './components/ui/MyUi/Spinner.vue';
 const pinia = createPinia();
 const app = createApp(App);
 app.use(router);
@@ -14,4 +15,5 @@ app.use(VueFire, {
   modules: [VueFireFirestoreOptionsAPI(), VueFireAuth()],
 });
 app.use(pinia);
+app.component('Spinner', Spinner)
 app.mount('#app');

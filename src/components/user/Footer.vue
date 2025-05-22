@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HOME_ROUTE } from '@/routerPath';
+import { HOME_ROUTE, USER_TERMS_ROUTE } from '@/routerPath';
 </script>
 
 <template>
@@ -52,9 +52,9 @@ import { HOME_ROUTE } from '@/routerPath';
           </li>
           <li><a href="#" class="hover:text-cyan-500">Delivery Details</a></li>
           <li>
-            <a href="#" class="hover:text-cyan-500">Terms & Conditions</a>
+            <a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500">Terms & Conditions</a>
           </li>
-          <li><a href="#" class="hover:text-cyan-500">Privacy Policy</a></li>
+          <li><a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500">Privacy Policy</a></li>
         </ul>
       </div>
 

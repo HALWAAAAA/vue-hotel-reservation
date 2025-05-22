@@ -1,6 +1,14 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+  documentId,
+} from 'firebase/firestore';
 import { db } from '@/components/firebase';
 
 interface Filters {
@@ -11,6 +19,7 @@ interface Filters {
   amenities: string[];
   freebies: string[];
   guestsMin: number;
+  freeCancellation: boolean;
 }
 
 export const useHotelStore = defineStore('hotel', () => {
@@ -27,7 +36,20 @@ export const useHotelStore = defineStore('hotel', () => {
     freebies: [],
     startDate: '',
     endDate: '',
+    freeCancellation: false,
   });
+
+  function processRooms(data: any, parentId: string) {
+    const roomsRaw = data.rooms ?? [];
+
+    data.rooms = roomsRaw.map((r: any, i: number) => ({
+      id: `${parentId}-${i}`,
+      ...r,
+    }));
+
+    const prices = data.rooms.map((r: any) => Number(r.basePrice));
+    data.fromPrice = prices.length ? Math.min(...prices) : Infinity;
+  }
 
   function setGuestsMin(v: number) {
     filters.value.guestsMin = v;
@@ -46,14 +68,9 @@ export const useHotelStore = defineStore('hotel', () => {
       hotels.value = snap.docs.map((d) => {
         const data: any = d.data();
 
-        const avail = data.rooms ?? [];
+        processRooms(data, d.id);
 
-        data.fromPrice = avail.length
-          ? Math.min(...avail.map((r: any) => Number(r.basePrice)))
-          : Infinity;
-
-        const hotel = { id: d.id, ...data };
-        return hotel;
+        return { id: d.id, ...data };
       });
 
       const maxPrice = Math.max(
@@ -77,10 +94,7 @@ export const useHotelStore = defineStore('hotel', () => {
     if (!docSnap.exists()) throw new Error('Hotel not found');
 
     const data: any = docSnap.data();
-    const avail = data.rooms ?? [];
-    data.fromPrice = avail.length
-      ? Math.min(...avail.map((r: any) => Number(r.basePrice)))
-      : Infinity;
+    processRooms(data, docSnap.id);
 
     const hotel = { id: docSnap.id, ...data };
 
@@ -107,8 +121,10 @@ export const useHotelStore = defineStore('hotel', () => {
       .trim();
 
   const filteredHotels = computed(() =>
-    hotels.value.filter(
-      (h) =>
+    hotels.value.filter((h) => {
+      if (filters.value.freeCancellation && !h.freeCancellationUpto24h)
+        return false;
+      return (
         h.fromPrice !== Infinity &&
         h.fromPrice <= filters.value.priceRange[0] &&
         h.rating >= filters.value.ratingMin &&
@@ -117,7 +133,8 @@ export const useHotelStore = defineStore('hotel', () => {
         filters.value.freebies.every((f) => h.amenities?.includes(f)) &&
         (locationSearch.value === '' ||
           normalize(h.address).includes(normalize(locationSearch.value)))
-    )
+      );
+    })
   );
 
   function roomFitsFilters(room: any) {
@@ -155,6 +172,37 @@ export const useHotelStore = defineStore('hotel', () => {
     locationSearch.value = val.toLowerCase().trim();
   }
 
+  async function loadHotelsByIds(ids: string[]) {
+    if (!ids.length) return
+    loading.value = true
+    error.value   = null
+    try {
+      const chunks: string[][] = []
+      for (let i = 0; i < ids.length; i += 10) {
+        chunks.push(ids.slice(i, i + 10))
+      }
+      await Promise.all(chunks.map(async chunk => {
+        const q = query(
+          collection(db, 'hotels'),
+          where(documentId(), 'in', chunk)
+        )
+        const snap = await getDocs(q)
+        snap.docs.forEach(d => {
+          const data: any = d.data()
+          processRooms(data, d.id)
+          const hotel = { id: d.id, ...data }
+          if (!hotels.value.find(h => h.id === hotel.id)) {
+            hotels.value.push(hotel)
+          }
+        })
+      }))
+    } catch (e) {
+      error.value = 'Failed to load hotels by IDs'
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     hotels,
     loading,
@@ -173,5 +221,7 @@ export const useHotelStore = defineStore('hotel', () => {
     setGuestsMin,
     setDateRange,
     roomFitsFilters,
+    loadHotelsByIds,
+    
   };
 });

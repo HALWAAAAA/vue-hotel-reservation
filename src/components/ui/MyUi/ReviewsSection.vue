@@ -1,92 +1,37 @@
-<script setup lang="ts">
-import { computed } from 'vue';
-import { Button } from '@/components/ui/button';
-import {
-  Pagination,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationLast,
-  PaginationList,
-  PaginationListItem,
-  PaginationNext,
-  PaginationPrev,
-} from '@/components/ui/pagination';
-import { Flag } from 'lucide-vue-next';
-
-interface Review {
-  id: number;
-  user: string;
-  avatar: string;
-  rating: number;
-  title: string;
-  text: string;
-}
-
-const allReviews: Review[] = [
-  {
-    id: 1,
-    user: 'Omar Siphron',
-    avatar: 'https://i.pravatar.cc/60?img=68',
-    rating: 5,
-    title: 'Amazing',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    id: 2,
-    user: 'Cristofer Ekstrom Bothman',
-    avatar: 'https://i.pravatar.cc/60?img=12',
-    rating: 5,
-    title: 'Amazing',
-    text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-
-  {
-    id: 2,
-    user: 'Cristofer Ekstrom Bothman',
-    avatar: 'https://i.pravatar.cc/60?img=12',
-    rating: 5,
-    title: 'Amazing',
-    text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-];
-
-const itemsPerPage = 2;
-
-const getPageSlice = (page: number) =>
-  allReviews.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-const averageRating = computed(() =>
-  (
-    allReviews.reduce((acc, r) => acc + r.rating, 0) / allReviews.length
-  ).toFixed(1)
-);
-</script>
-
 <template>
   <section
-    class="border-t pt-12 mt-12 max-w-screen-2xl mx-auto"
     id="hotel-reviews"
+    class="border-t pt-12 mt-12 max-w-screen-2xl mx-auto px-4"
   >
     <div class="flex items-start justify-between mb-8">
       <div>
-        <p class="text-5xl font-semibold leading-none">{{ averageRating }}</p>
-        <p class="text-lg font-medium -mt-1">Very good</p>
+        <p class="text-5xl font-semibold leading-none">
+          {{ averageRating.toFixed(1) }}
+        </p>
+        <p class="text-lg font-medium -mt-1">
+          {{ ratingLabel }}
+        </p>
         <p class="text-sm text-gray-500">
-          {{ allReviews.length }} verified reviews
+          {{ reviews.length }} verified review<span v-if="reviews.length !== 1">s</span>
         </p>
       </div>
-
-      <Button
+      <RouterLink
+        :to="{ name: USER_REVIEW_NAME, params: { hotelId: hotelId } }"
         class="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
       >
         Give your review
-      </Button>
+      </RouterLink>
+    </div>
+
+    <div v-if="loading" class="text-center py-20">
+      Loading reviews…
     </div>
 
     <Pagination
+      v-else
       v-slot="{ page }"
       :items-per-page="itemsPerPage"
-      :total="allReviews.length"
+      :total="reviews.length"
       :default-page="1"
       :sibling-count="1"
       show-edges
@@ -94,28 +39,14 @@ const averageRating = computed(() =>
     >
       <ul class="space-y-8">
         <li
-          v-for="review in getPageSlice(page)"
-          :key="review.id"
-          class="flex gap-4 border-b pb-6"
+          v-for="r in pagedReviews(page)"
+          :key="r.id"
+          class="flex flex-col gap-2 border-b pb-6"
         >
-          <img
-            :src="review.avatar"
-            alt="avatar"
-            class="w-10 h-10 rounded-full object-cover mt-1"
-          />
-          <div class="flex-1">
-            <p class="font-medium">
-              <span class="text-gray-900"
-                >{{ review.rating }}.0 {{ review.title }}</span
-              >
-              <span class="mx-1 text-gray-400">|</span>
-              <span class="text-gray-600">{{ review.user }}</span>
-            </p>
-            <p class="text-sm text-gray-600 mt-1">{{ review.text }}</p>
-          </div>
-          <button class="text-gray-400 hover:text-gray-600">
-            <Flag :size="18" />
-          </button>
+          <p class="text-gray-800">{{ r.text }}</p>
+          <p class="text-xs text-gray-500">
+            by {{ r.userId }} · {{ formatDate(r.createdAt) }}
+          </p>
         </li>
       </ul>
 
@@ -125,12 +56,8 @@ const averageRating = computed(() =>
       >
         <PaginationFirst />
         <PaginationPrev />
-        <template v-for="(item, index) in items" :key="index">
-          <PaginationListItem
-            v-if="item.type === 'page'"
-            :value="item.value"
-            as-child
-          >
+        <template v-for="(item, idx) in items" :key="idx">
+          <PaginationListItem v-if="item.type === 'page'" :value="item.value" as-child>
             <Button
               class="w-9 h-9 p-0"
               :variant="item.value === page ? 'default' : 'outline'"
@@ -138,7 +65,7 @@ const averageRating = computed(() =>
               {{ item.value }}
             </Button>
           </PaginationListItem>
-          <PaginationEllipsis v-else :index="index" />
+          <PaginationEllipsis v-else :index="idx" />
         </template>
         <PaginationNext />
         <PaginationLast />
@@ -146,3 +73,75 @@ const averageRating = computed(() =>
     </Pagination>
   </section>
 </template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, RouterLink } from 'vue-router'
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev,
+} from '@/components/ui/pagination'
+import { Button } from '@/components/ui/button'
+import { USER_REVIEW_NAME } from '@/routerPath'
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore'
+import { db } from '@/components/firebase'
+
+interface ReviewDoc {
+  id: string
+  userId: string
+  text: string
+  createdAt: Timestamp
+}
+
+const route = useRoute()
+const hotelId = computed(() => route.params.id as string)
+
+const reviews = ref<ReviewDoc[]>([])
+const loading = ref(true)
+
+async function loadReviews(id: string) {
+  loading.value = true
+  const q = query(collection(db, 'reviews'), where('hotelId', '==', id))
+  const snap = await getDocs(q)
+  reviews.value = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }))
+  loading.value = false
+}
+
+onMounted(() => {
+  if (hotelId.value) loadReviews(hotelId.value)
+})
+
+watch(hotelId, id => {
+  if (id) loadReviews(id)
+})
+
+const itemsPerPage = 5
+
+function pagedReviews(page: number) {
+  const start = (page - 1) * itemsPerPage
+  return reviews.value.slice(start, start + itemsPerPage)
+}
+
+const averageRating = computed<number>(() => {
+  if (reviews.value.length === 0) return 0
+  const sum = reviews.value.reduce((acc, r) => acc + ((r as any).rating || 0), 0)
+  return sum / reviews.value.length
+})
+
+const ratingLabel = computed<string>(() => {
+  const avg = averageRating.value
+  if (avg >= 4) return 'Very good'
+  if (avg >= 3) return 'Good'
+  return 'Review'
+})
+
+function formatDate(ts: Timestamp) {
+  return ts.toDate().toLocaleDateString()
+}
+</script>

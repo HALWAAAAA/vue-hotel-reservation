@@ -28,8 +28,6 @@
           </div>
         </div>
 
-        <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
-
         <button
           type="submit"
           :disabled="loading"
@@ -49,15 +47,16 @@ import { auth, db } from '@/components/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { USER_HOME_NAME } from '@/routerPath';
-
+import { useToast } from '@/components/ui/toast/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { h } from 'vue';
 const email = ref('');
 const password = ref('');
-const error = ref<string | null>(null);
 const loading = ref(false);
 const router = useRouter();
+const { toast } = useToast();
 
 async function onRegister() {
-  error.value = null;
   loading.value = true;
   try {
     const cred = await createUserWithEmailAndPassword(
@@ -69,12 +68,22 @@ async function onRegister() {
 
     await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
+      isAdmin: false,
       createdAt: serverTimestamp(),
     });
 
     router.push({ name: USER_HOME_NAME });
   } catch (e: any) {
-    error.value = e.message;
+    toast({
+      title: 'Помилка',
+      description: 'Такий користувач вже існує',
+      variant: 'destructive',
+      action: h(
+        ToastAction,
+        { altText: 'Добре' },
+        { default: () => 'Закрити' }
+      ),
+    });
   } finally {
     loading.value = false;
   }

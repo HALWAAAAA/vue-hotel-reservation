@@ -5,10 +5,12 @@ import { useRouter } from 'vue-router';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import SelectPeople from '@/components/ui/MyUi/SelectPeople.vue';
-
+import { useToast } from '@/components/ui/toast/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { h } from 'vue';
 const store = useHotelStore();
 const router = useRouter();
-
+const { toast } = useToast();
 const location = ref('');
 const startDate = ref('');
 const endDate = ref('');
@@ -17,7 +19,16 @@ const guests = ref(1);
 async function doSearch() {
   const loc = location.value.trim();
   if (!loc) {
-    alert('Enter a location');
+   toast({
+      title: 'Нічого не введено',
+      description: 'Введіть назву міста у Location',
+      variant: 'destructive',
+      action: h(
+        ToastAction,
+        { altText: 'Добре' },
+        { default: () => 'Закрити' }
+      ),
+    });
     return;
   }
 

@@ -1,13 +1,13 @@
 <template>
   <div class="w-full max-w-7xl mx-auto px-4">
-    <!-- картка з фільтрами -->
     <div class="relative z-10 flex justify-center">
-      <div class="bg-white rounded-lg shadow-lg px-6 py-6 w-full max-w-5xl mb-10">
+      <div
+        class="bg-white rounded-lg shadow-lg px-6 py-6 w-full max-w-5xl mb-10"
+      >
         <SearchBar />
       </div>
     </div>
 
-    
     <div class="flex flex-col md:flex-row gap-6 mb-10">
       <HotelFilters />
 
@@ -15,11 +15,14 @@
         <p class="text-sm text-gray-500 mb-5">
           Showing {{ filteredHotels.length }} results
         </p>
-        <HotelList :hotels="filteredHotels" />
+        <div v-if="store.loading" class="flex justify-center py-16">
+        <Spinner class="h-12 w-12" />
+      </div>
+        <HotelList v-else :hotels="filteredHotels" />
       </div>
     </div>
   </div>
-</template>м
+</template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';

@@ -60,8 +60,8 @@ async function fetchHotelData() {
 function initRoomData() {
   roomImages.value = [...(room.value.images || [])];
 
-  const hasRange =
-    Array.isArray(room.value.available) && room.value.available.length > 0;
+  const hasRange = room.value?.available?.length > 0;
+
   editFields.value = {
     accommodationType: room.value.accommodationType || '',
     basePrice: room.value.basePrice || 0,
@@ -212,7 +212,6 @@ async function deleteRoom() {
         <template v-if="room.startDate">
           {{ room.startDate }} – {{ room.endDate }}
         </template>
-        <template v-else>—</template>
       </p>
     </div>
 

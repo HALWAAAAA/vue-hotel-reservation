@@ -1,39 +1,50 @@
-// src/stores/auth.ts
-import { defineStore } from 'pinia';
-import { useCurrentUser } from 'vuefire';
-import { computed } from 'vue';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/components/firebase';
-import router from '@/router';
+// src/store/authStore.ts
+import { defineStore } from 'pinia'
+import { useCurrentUser } from 'vuefire'
+import { computed, ref, watch } from 'vue'
+import { signOut, onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/components/firebase'
+import router from '@/router'
 import {
   USER_HOME_NAME,
-  USER_REGISTER_NAME,
-  HOME_ROUTE,
-  USER_HOME_ROUTE,
-} from '@/routerPath';
+} from '@/routerPath'
+import { useFavoriteStore } from './favoriteStore'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = useCurrentUser();
+  const user = useCurrentUser()
+  const loading = ref(true)   
+  const isLoggedIn = computed(() => !!user.value)
+  const isAdmin    = ref(false)
 
-  const isLoggedIn = computed(() => !!user.value);
+  const fav = useFavoriteStore()
 
-  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
-  const isAdmin = computed(() => user.value?.email === ADMIN_EMAIL);
+  
+  onAuthStateChanged(auth, (u) => {
+    user.value = u
+    loading.value = false 
+    if (u) fav.loadFavorites(u.uid)
+  })
+
+  function setAdmin(flag: boolean) {
+    isAdmin.value = flag
+  }
 
   async function logout() {
     try {
-      await signOut(auth);
-
-      router.push({ name: USER_HOME_NAME });
+      await signOut(auth)
+      isAdmin.value = false
+      router.push({ name: USER_HOME_NAME })
     } catch (err) {
-      console.error('Logout failed:', err);
+      console.error('Logout failed:', err)
     }
   }
 
   return {
     user,
+    loading, 
     isLoggedIn,
     isAdmin,
     logout,
-  };
-});
+    setAdmin
+  }
+})

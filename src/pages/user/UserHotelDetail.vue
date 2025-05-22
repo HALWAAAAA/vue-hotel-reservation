@@ -1,6 +1,7 @@
 <template>
   <div class="max-w-screen-2xl mx-auto px-4 mt-5 mb-5">
-    <div v-if="hotel">
+    <div v-if="loading" class="text-center py-20">Loading hotel...</div>
+    <div v-else-if="hotel">
       <div
         class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
       >
@@ -15,16 +16,10 @@
         </div>
         <div class="flex flex-col items-end gap-2">
           <p class="text-blue-600 text-xl font-semibold">
-            ₹ {{ hotel.rooms?.[0]?.basePrice || '---'
+            $ {{ hotel.rooms?.[0]?.basePrice || '---'
             }}<span class="text-sm">/night</span>
           </p>
-          <div class="flex gap-2">
-            <Button
-              class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-            >
-              Book now
-            </Button>
-          </div>
+          <div class="flex gap-2"></div>
         </div>
       </div>
 
@@ -63,10 +58,13 @@
 
       <div class="border-t pt-8 mt-8">
         <h2 class="text-xl font-semibold mb-4">Available Rooms</h2>
+        <div v-if="allFullyBooked" class="py-6 text-center text-red-500">
+          На жаль, у ці дати немає вільних кімнат
+        </div>
         <div class="space-y-4">
           <div
-            v-for="(room, index) in hotel.rooms?.filter((r) => r.available)"
-            :key="index"
+            v-for="room in displayRooms"
+            :key="room.id"
             class="flex flex-col md:flex-row items-center justify-between gap-4 border rounded-lg p-4 shadow-sm"
           >
             <img
@@ -86,6 +84,7 @@
                 <span class="text-sm text-gray-500">/night</span>
               </p>
               <Button
+                @click="goToBooking(room)"
                 class="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
               >
                 Book now
@@ -115,51 +114,121 @@
               </a>
             </div>
             <AmenitiesList :amenities="hotel.amenities" />
-            <ReviewsSection class="mb-10" />
+            <ReviewsSection class="mb-10"  :hotelId="route.params.id"/>
           </div>
         </div>
       </div>
     </div>
-
-    <div v-else>
-      <p>Loading hotel...</p>
-    </div>
+    <div v-else class="text-center py-20">Hotel not found.</div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router';
 import { useHotelStore } from '@/store/hotelStore';
+import { useAuthStore } from '@/store/authStore';
 import HotelMap from '@/components/ui/MyUi/HotelMap.vue';
 import AmenitiesList from '@/components/ui/MyUi/AmenitiesList.vue';
 import ReviewsSection from '@/components/ui/MyUi/ReviewsSection.vue';
 import Button from '@/components/ui/button/Button.vue';
-
+import { USER_BOOK_NAME } from '@/routerPath';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/components/firebase';
+const authStore = useAuthStore();
+const router = useRouter();
 const route = useRoute();
 const store = useHotelStore();
-const hotel = ref(null);
+const hotel = ref<any | null>(null);
+
 const mainImage = ref('');
-const imageList = ref([]);
-async function loadHotelData(id) {
+const imageList = ref<string[]>([]);
+const loading = ref(true);
+const bookingRoom = ref(null);
+const showBookingForm = ref(false);
+const bookedRoomIds = ref<Set<string>>(new Set());
+
+const desiredStart = computed(() => store.filters.startDate);
+const desiredEnd = computed(() => store.filters.endDate);
+const bookings = ref<{ roomId: string; startDate: string; endDate: string }[]>(
+  []
+);
+
+async function loadHotelData(id: string) {
+  loading.value = true;
   const data = store.getHotelById(id) || (await store.fetchHotelById(id));
   hotel.value = data;
+
+  const snap = await getDocs(
+    query(collection(db, 'bookings'), where('hotelId', '==', id))
+  );
+  bookings.value = snap.docs.map((d) => {
+    const b: any = d.data();
+    return { roomId: b.roomId, startDate: b.startDate, endDate: b.endDate };
+  });
+
   imageList.value = data?.images || [];
   mainImage.value = imageList.value[0] || '/fallback.jpg';
+  loading.value = false;
 }
 
 onMounted(() => {
-  loadHotelData(route.params.id);
+  loadHotelData(route.params.id as string);
 });
 
-onBeforeRouteUpdate((to, from, next) => {
-  loadHotelData(to.params.id);
-  next();
+onBeforeRouteUpdate(async (to, from, next) => {
+  loadHotelData(to.params.id as string).then(() => next());
 });
 
-function swapImages(index) {
+function swapImages(index: number) {
   const temp = mainImage.value;
   mainImage.value = imageList.value[index];
   imageList.value[index] = temp;
 }
+  
+function goToBooking(room: any) {
+  if (!authStore.isLoggedIn) {
+    return router.push({ name: 'Login' });
+  }
+  const loc =
+    (route.params.location as string) ||
+
+    store.filters.startDate
+  router.push({
+    name: USER_BOOK_NAME,
+    params: {
+      location: loc,
+      hotelId: route.params.id,
+      roomId: room.id,
+    },
+  });
+}
+
+const displayRooms = computed(() => {
+  const rooms = hotel.value?.rooms ?? [];
+  // якщо користувач не обрав дати — показуємо всі
+  if (!desiredStart.value || !desiredEnd.value)
+    return rooms.filter((r: any) => r.available);
+  return rooms.filter((r: any) => {
+    if (!r.available) return false;
+    // перевіряємо, що бажаний інтервал у межах загальної доступності кімнати
+    if (r.startDate && r.endDate) {
+      if (desiredStart.value < r.startDate || desiredEnd.value > r.endDate) {
+        return false;
+      }
+    }
+    // знаходимо всі броні саме цієї кімнати
+    const roomBookings = bookings.value.filter((b) => b.roomId === r.id);
+    // якщо хоча б одна броня **накладається** на бажаний інтервал — виключаємо
+    for (const b of roomBookings) {
+      const overlap = !(
+        desiredEnd.value <= b.startDate || desiredStart.value >= b.endDate
+      );
+      if (overlap) return false;
+    }
+    return true;
+  });
+});
+
+const allFullyBooked = computed(() => displayRooms.value.length === 0);
 </script>
