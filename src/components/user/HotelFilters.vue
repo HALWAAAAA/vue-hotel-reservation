@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useHotelStore } from '@/store/hotelStore';
-
+import { computed } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Label from '@/components/ui/label/Label.vue';
@@ -9,6 +9,12 @@ import { Slider } from '@/components/ui/slider';
 
 const store = useHotelStore();
 const { filters, allAmenities } = storeToRefs(store);
+const freeCancellation = computed<boolean>({
+  get: () => filters.value.freeCancellation,
+  set: v => {
+    filters.value.freeCancellation = v
+  }
+})
 </script>
 
 <template>
@@ -56,6 +62,11 @@ const { filters, allAmenities } = storeToRefs(store);
           />
           {{ a }}
         </Label>
+
+        <Label class="flex items-center gap-2 mt-2">
+  <Checkbox v-model="freeCancellation" />
+  Free Cancellation
+</Label>
       </div>
     </div>
   </aside>

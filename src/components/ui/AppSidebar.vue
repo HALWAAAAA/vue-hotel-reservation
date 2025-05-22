@@ -15,7 +15,7 @@ import {
   type SidebarProps,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { USER_HOME_ROUTE } from '@/routerPath';
+import { USER_HOME_ROUTE, HOTEL_REQUESTS_ROUTE } from '@/routerPath';
 import { RouterLink } from 'vue-router';
 const props = defineProps<SidebarProps>();
 
@@ -33,7 +33,7 @@ const data = {
         },
         {
           title: 'Requests',
-          url: '#',
+          url: HOTEL_REQUESTS_ROUTE,
         },
       ],
     },
