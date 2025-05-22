@@ -11,7 +11,7 @@
           </h2>
           <p class="text-gray-600 mb-4">{{ hotel.name }} ・ {{ room.type }}</p>
           <p class="text-gray-800">
-            $ {{ room.basePrice
+            zł {{ room.basePrice
             }}<span class="text-sm text-gray-500">/night</span>
           </p>
         </div>
@@ -79,24 +79,24 @@
           <dl class="space-y-2 text-sm text-gray-700">
             <div class="flex justify-between">
               <dt>Base Fare</dt>
-              <dd>$ {{ room.basePrice }} × {{ nights }} night(s)</dd>
+              <dd>zł {{ room.basePrice }} × {{ nights }} night(s)</dd>
             </div>
             <div class="flex justify-between">
               <dt>Discount</dt>
-              <dd>$ 0</dd>
+              <dd>zł 0</dd>
             </div>
             <div class="flex justify-between">
               <dt>Taxes</dt>
-              <dd>$ {{ tax }}</dd>
+              <dd>zł {{ tax }}</dd>
             </div>
             <div class="flex justify-between">
               <dt>Fee</dt>
-              <dd>$ {{ fee }}</dd>
+              <dd>zł {{ fee }}</dd>
             </div>
             <hr />
             <div class="flex justify-between font-semibold">
               <dt>Total</dt>
-              <dd>$ {{ total }}</dd>
+              <dd>zł {{ total }}</dd>
             </div>
           </dl>
         </div>

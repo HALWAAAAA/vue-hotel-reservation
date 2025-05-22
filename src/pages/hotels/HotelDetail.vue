@@ -28,18 +28,18 @@
       </div>
 
       <RouterLink :to="{ name: FORM_ROOM_NAME, params: { id: hotelId } }">
-        <Button class="mt-4">Додати кімнату</Button>
+        <Button class="mt-4">Add room</Button>
       </RouterLink>
 
       <Dialog v-model:open="dialogOpen">
         <DialogTrigger as-child>
-          <Button class="mt-2 ml-10" variant="outline">Редагувати</Button>
+          <Button class="mt-2 ml-10" variant="outline">Change data</Button>
         </DialogTrigger>
 
         <DialogContent class="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Редагувати готель</DialogTitle>
-            <DialogDescription>Онови дані про готель нижче</DialogDescription>
+            <DialogTitle>Change hotel</DialogTitle>
+            <DialogDescription>Update hotel's data</DialogDescription>
           </DialogHeader>
 
           <ScrollArea class="max-h-[65vh] pr-4">
@@ -54,7 +54,7 @@
                       v-model="editableFields[key].value"
                     />
                     <span class="text-sm"
-                      >Безкоштовне скасування до 24 год</span
+                      >Free Cancellation before 24h</span
                     >
                   </div> </template
                 ><template v-else-if="key === AMENITIES_KEY">
@@ -89,7 +89,7 @@
               </div>
 
               <div>
-                <Label>Фото</Label>
+                <Label>Photo</Label>
                 <div class="flex flex-wrap gap-2 mt-1">
                   <div
                     v-for="(img, index) in images"
@@ -113,12 +113,12 @@
                   class="mt-2"
                 />
                 <Button type="button" @click="uploadNewImage" class="mt-2">
-                  Додати фото
+                  Add photo
                 </Button>
               </div>
 
               <DialogFooter class="pt-4">
-                <Button type="submit">Зберегти</Button>
+                <Button type="submit">Save</Button>
               </DialogFooter>
             </form>
           </ScrollArea>
@@ -126,7 +126,7 @@
       </Dialog>
 
       <div class="mt-8">
-        <h2 class="text-xl font-bold">Кімнати готелю</h2>
+        <h2 class="text-xl font-bold">Hotel room</h2>
         <div v-if="hotel.rooms && hotel.rooms.length">
           <RoomDetail
             v-for="(room, index) in hotel.rooms"
@@ -137,7 +137,7 @@
           />
         </div>
         <div v-else>
-          <p>Немає кімнат</p>
+          <p>No rooms available</p>
         </div>
       </div>
     </div>

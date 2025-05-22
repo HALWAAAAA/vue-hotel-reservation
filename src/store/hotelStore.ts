@@ -61,18 +61,13 @@ export const useHotelStore = defineStore('hotel', () => {
   async function loadHotels() {
     loading.value = true;
     error.value = null;
-
     try {
       const snap = await getDocs(collection(db, 'hotels'));
-
       hotels.value = snap.docs.map((d) => {
         const data: any = d.data();
-
         processRooms(data, d.id);
-
         return { id: d.id, ...data };
       });
-
       const maxPrice = Math.max(
         ...hotels.value.map((h) => (h.fromPrice === Infinity ? 0 : h.fromPrice))
       );
@@ -173,33 +168,35 @@ export const useHotelStore = defineStore('hotel', () => {
   }
 
   async function loadHotelsByIds(ids: string[]) {
-    if (!ids.length) return
-    loading.value = true
-    error.value   = null
+    if (!ids.length) return;
+    loading.value = true;
+    error.value = null;
     try {
-      const chunks: string[][] = []
+      const chunks: string[][] = [];
       for (let i = 0; i < ids.length; i += 10) {
-        chunks.push(ids.slice(i, i + 10))
+        chunks.push(ids.slice(i, i + 10));
       }
-      await Promise.all(chunks.map(async chunk => {
-        const q = query(
-          collection(db, 'hotels'),
-          where(documentId(), 'in', chunk)
-        )
-        const snap = await getDocs(q)
-        snap.docs.forEach(d => {
-          const data: any = d.data()
-          processRooms(data, d.id)
-          const hotel = { id: d.id, ...data }
-          if (!hotels.value.find(h => h.id === hotel.id)) {
-            hotels.value.push(hotel)
-          }
+      await Promise.all(
+        chunks.map(async (chunk) => {
+          const q = query(
+            collection(db, 'hotels'),
+            where(documentId(), 'in', chunk)
+          );
+          const snap = await getDocs(q);
+          snap.docs.forEach((d) => {
+            const data: any = d.data();
+            processRooms(data, d.id);
+            const hotel = { id: d.id, ...data };
+            if (!hotels.value.find((h) => h.id === hotel.id)) {
+              hotels.value.push(hotel);
+            }
+          });
         })
-      }))
+      );
     } catch (e) {
-      error.value = 'Failed to load hotels by IDs'
+      error.value = 'Failed to load hotels by IDs';
     } finally {
-      loading.value = false
+      loading.value = false;
     }
   }
 
@@ -222,6 +219,5 @@ export const useHotelStore = defineStore('hotel', () => {
     setDateRange,
     roomFitsFilters,
     loadHotelsByIds,
-    
   };
 });

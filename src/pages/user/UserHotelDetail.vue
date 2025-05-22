@@ -16,7 +16,7 @@
         </div>
         <div class="flex flex-col items-end gap-2">
           <p class="text-blue-600 text-xl font-semibold">
-            $ {{ hotel.rooms?.[0]?.basePrice || '---'
+            zł {{ hotel.rooms?.[0]?.basePrice || '---'
             }}<span class="text-sm">/night</span>
           </p>
           <div class="flex gap-2"></div>
@@ -206,24 +206,20 @@ function goToBooking(room: any) {
 
 const displayRooms = computed(() => {
   const rooms = hotel.value?.rooms ?? [];
-  // якщо користувач не обрав дати — показуємо всі
-  if (!desiredStart.value || !desiredEnd.value)
-    return rooms.filter((r: any) => r.available);
+  if (!desiredStart.value || !desiredEnd.value) {
+    
+    return rooms;
+  }
   return rooms.filter((r: any) => {
-    if (!r.available) return false;
-    // перевіряємо, що бажаний інтервал у межах загальної доступності кімнати
+    
     if (r.startDate && r.endDate) {
       if (desiredStart.value < r.startDate || desiredEnd.value > r.endDate) {
         return false;
       }
     }
-    // знаходимо всі броні саме цієї кімнати
     const roomBookings = bookings.value.filter((b) => b.roomId === r.id);
-    // якщо хоча б одна броня **накладається** на бажаний інтервал — виключаємо
     for (const b of roomBookings) {
-      const overlap = !(
-        desiredEnd.value <= b.startDate || desiredStart.value >= b.endDate
-      );
+      const overlap = !(desiredEnd.value <= b.startDate || desiredStart.value >= b.endDate);
       if (overlap) return false;
     }
     return true;

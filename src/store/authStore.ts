@@ -1,4 +1,3 @@
-// src/store/authStore.ts
 import { defineStore } from 'pinia'
 import { useCurrentUser } from 'vuefire'
 import { computed, ref, watch } from 'vue'

@@ -203,9 +203,9 @@ async function deleteRoom() {
 <template>
   <div v-if="room">
     <div class="space-y-1">
-      <p><strong>Тип розміщення:</strong> {{ room.accommodationType }}</p>
+      <p><strong>Accommodation Type:</strong> {{ room.accommodationType }}</p>
 
-      <p><strong>Ціна за ніч:</strong> {{ room.basePrice }}</p>
+      <p><strong>Price per night:</strong> {{ room.basePrice }}</p>
       <p><strong>Max guests:</strong> {{ room.maxGuests }}</p>
       <p>
         <strong>Available:</strong>
@@ -225,25 +225,25 @@ async function deleteRoom() {
     </div>
     <Dialog v-model:open="dialogOpen">
       <DialogTrigger as-child>
-        <Button variant="outline" class="mt-4"> Редагувати кімнату </Button>
+        <Button variant="outline" class="mt-4"> Change data room </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Редагувати кімнату</DialogTitle>
+          <DialogTitle>Change data room</DialogTitle>
           <DialogDescription>
-            Змініть потрібні поля та збережіть
+            Change and Submit
           </DialogDescription>
         </DialogHeader>
         <ScrollArea class="max-h-[50vh] pr-4">
           <form @submit.prevent="updateRoom" class="space-y-3 pb-6">
-            <Label for="accommodationType">Тип розміщення</Label>
+            <Label for="accommodationType">Accommodation Type</Label>
             <Input
               id="accommodationType"
               v-model="editFields.accommodationType"
               placeholder="Single / Deluxe"
             />
 
-            <Label for="basePrice">Ціна за ніч</Label>
+            <Label for="basePrice">Price per night</Label>
             <Input
               id="basePrice"
               type="number"
@@ -260,7 +260,7 @@ async function deleteRoom() {
             <Input type="date" v-model="editFields.endDate" />
 
             <div>
-              <Label>Фото</Label>
+              <Label>Photo</Label>
               <div class="flex flex-wrap gap-2 mt-1">
                 <div
                   v-for="(img, index) in roomImages"
@@ -284,12 +284,12 @@ async function deleteRoom() {
                 class="mt-2"
               />
               <Button type="button" @click="uploadRoomImage" class="mt-2">
-                Додати фото
+                Add photo
               </Button>
             </div>
 
             <DialogFooter class="pt-4">
-              <Button type="submit">Зберегти</Button>
+              <Button type="submit">Save</Button>
             </DialogFooter>
           </form>
         </ScrollArea>
@@ -297,7 +297,7 @@ async function deleteRoom() {
     </Dialog>
 
     <Button variant="destructive" class="mt-4" @click="deleteRoom">
-      Видалити кімнату
+      Delete room
     </Button>
   </div>
 </template>

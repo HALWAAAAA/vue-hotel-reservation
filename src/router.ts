@@ -67,7 +67,7 @@ const routes = [
     path: USER_FOLLOWED_ROUTE,
     name: USER_FOLLOWED_NAME,
     component: FollowedPage,
-    meta: { layout: 'user', requiresAuth: true },
+    meta: { layout: 'user' },
   },
   {
     path: HOTEL_DETAILS_ROUTE,

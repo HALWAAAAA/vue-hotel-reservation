@@ -31,11 +31,11 @@ export const columns: ColumnDef<Hotel>[] = [
 
   {
     accessorKey: 'name',
-    header: 'Готель / Апартаменти',
+    header: 'Hotel',
   },
   {
     accessorKey: 'area',
-    header: 'Локація',
+    header: 'Area',
   },
   {
     accessorKey: 'email',
@@ -64,7 +64,7 @@ export const columns: ColumnDef<Hotel>[] = [
         h(DropdownAction, {
           hotel,
           onExpand: row.toggleExpanded,
-          // <- передаємо об'єкт hotel
+          
         })
       );
     },

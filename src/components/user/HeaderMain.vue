@@ -19,7 +19,7 @@
       <template v-if="!auth.isLoggedIn">
         <RouterLink
           :to="{ name: USER_LOGIN_NAME }"
-          class="hover:text-white/80 transition"
+          class="hover:text-cyan-300 transition cursor-pointer text-white"
         >
           Log In
         </RouterLink>
