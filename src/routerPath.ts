@@ -20,7 +20,7 @@ export const USER_HOME_NAME = 'HomeUser';
 export const USER_HOME_ROUTE = '/home';
 
 export const USER_SEARCH_NAME = 'SearchResult';
-export const USER_SEARCH_ROUTE = '/home/:location';
+export const USER_SEARCH_ROUTE = '/home/search';
 
 export const USER_HOTEL_CARD_NAME = 'UserHotelDetail';
 export const USER_HOTEL_CARD_ROUTE = '/home/:location?/:id';
