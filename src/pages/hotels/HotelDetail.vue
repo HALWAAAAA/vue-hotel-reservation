@@ -28,18 +28,18 @@
       </div>
 
       <RouterLink :to="{ name: FORM_ROOM_NAME, params: { id: hotelId } }">
-        <Button class="mt-4">Додати кімнату</Button>
+        <Button class="mt-4">Add room</Button>
       </RouterLink>
 
       <Dialog v-model:open="dialogOpen">
         <DialogTrigger as-child>
-          <Button class="mt-2 ml-10" variant="outline">Редагувати</Button>
+          <Button class="mt-2 ml-10" variant="outline">Change data</Button>
         </DialogTrigger>
 
         <DialogContent class="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Редагувати готель</DialogTitle>
-            <DialogDescription>Онови дані про готель нижче</DialogDescription>
+            <DialogTitle>Change hotel</DialogTitle>
+            <DialogDescription>Update hotel's data</DialogDescription>
           </DialogHeader>
 
           <ScrollArea class="max-h-[65vh] pr-4">
@@ -53,9 +53,7 @@
                       :id="key"
                       v-model="editableFields[key].value"
                     />
-                    <span class="text-sm"
-                      >Безкоштовне скасування до 24 год</span
-                    >
+                    <span class="text-sm">Free Cancellation before 24h</span>
                   </div> </template
                 ><template v-else-if="key === AMENITIES_KEY">
                   <div class="grid grid-cols-2 gap-2 mt-1">
@@ -89,7 +87,7 @@
               </div>
 
               <div>
-                <Label>Фото</Label>
+                <Label>Photo</Label>
                 <div class="flex flex-wrap gap-2 mt-1">
                   <div
                     v-for="(img, index) in images"
@@ -113,12 +111,12 @@
                   class="mt-2"
                 />
                 <Button type="button" @click="uploadNewImage" class="mt-2">
-                  Додати фото
+                  Add photo
                 </Button>
               </div>
 
               <DialogFooter class="pt-4">
-                <Button type="submit">Зберегти</Button>
+                <Button type="submit">Save</Button>
               </DialogFooter>
             </form>
           </ScrollArea>
@@ -126,7 +124,7 @@
       </Dialog>
 
       <div class="mt-8">
-        <h2 class="text-xl font-bold">Кімнати готелю</h2>
+        <h2 class="text-xl font-bold">Hotel room</h2>
         <div v-if="hotel.rooms && hotel.rooms.length">
           <RoomDetail
             v-for="(room, index) in hotel.rooms"
@@ -137,7 +135,7 @@
           />
         </div>
         <div v-else>
-          <p>Немає кімнат</p>
+          <p>No rooms available</p>
         </div>
       </div>
     </div>
@@ -222,24 +220,27 @@ async function fetchHotelData() {
     hotel.value = docSnap.data();
     images.value = hotel.value.images || [];
     editableFields.value = {
-      name: { label: 'Назва', value: hotel.value.name || '' },
-      type: { label: 'Тип', value: hotel.value.type || '' },
+      name: { label: 'Name', value: hotel.value.name || '' },
+      type: { label: 'Type', value: hotel.value.type || '' },
       email: { label: 'Email', value: hotel.value.email || '' },
-      phone: { label: 'Телефон', value: hotel.value.phone || '' },
-      address: { label: 'Адрес', value: hotel.value.address || '' },
-      description: { label: 'Опис', value: hotel.value.description || '' },
-      rating: { label: 'Рейтинг', value: hotel.value.rating || 1 },
+      phone: { label: 'Phone number', value: hotel.value.phone || '' },
+      address: { label: 'Address', value: hotel.value.address || '' },
+      description: {
+        label: 'Description',
+        value: hotel.value.description || '',
+      },
+      rating: { label: 'Rating', value: hotel.value.rating || 1 },
       numberOfReviews: {
-        label: 'Кількість відгуків',
+        label: 'Reviews',
         value: hotel.value.numberOfReviews || 0,
       },
       freeCancellationUpto24h: {
-        label: 'Скасування до 24 год',
+        label: 'Free Cancellation Up to 24h',
         value: hotel.value.freeCancellationUpto24h ?? false,
       },
     };
     editableFields.value.amenities = {
-      label: 'Зручності',
+      label: 'Amenities',
       value: hotel.value.amenities ? [...hotel.value.amenities] : [],
     };
   }
@@ -259,8 +260,8 @@ const handleFileUpload = (event: Event) => {
 const uploadNewImage = async () => {
   if (!newImageFile.value) {
     toast({
-      title: 'Помилка',
-      description: 'Виберіть фото для завантаження',
+      title: 'Error',
+      description: 'Choose a photo',
       variant: 'destructive',
     });
     return;
@@ -275,12 +276,12 @@ const uploadNewImage = async () => {
     await updateDoc(doc(db, 'hotels', hotelId), {
       images: arrayUnion(downloadURL),
     });
-    toast({ title: 'Успіх', description: 'Фото завантажено та збережено' });
+    toast({ title: 'success', description: 'Photo is submited' });
     newImageFile.value = null;
   } catch (error) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося завантажити фото',
+      title: 'Error',
+      description: 'Photo is bot downloaded',
       variant: 'destructive',
     });
   }
@@ -306,11 +307,11 @@ const removeImage = async (index: number) => {
     await updateDoc(doc(db, 'hotels', hotelId), {
       images: arrayRemove(downloadURL),
     });
-    toast({ title: 'Успіх', description: 'Фото видалено' });
+    toast({ title: 'success', description: 'Photo is deleted' });
   } catch (error) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося видалити фото',
+      title: 'Error',
+      description: 'Photo is not deleted',
       variant: 'destructive',
     });
   }
@@ -326,13 +327,13 @@ const updateHotel = async () => {
   updatedData.images = images.value;
   try {
     await updateDoc(doc(db, 'hotels', hotelId), updatedData);
-    toast({ title: 'Успіх', description: 'Готель оновлено' });
+    toast({ title: 'Success', description: 'Hotel is updated' });
     hotel.value = { ...hotel.value, ...updatedData };
     dialogOpen.value = false;
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося оновити готель',
+      title: 'Error',
+      description: 'Update is not successfull',
       variant: 'destructive',
     });
   }

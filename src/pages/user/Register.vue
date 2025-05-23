@@ -75,13 +75,13 @@ async function onRegister() {
     router.push({ name: USER_HOME_NAME });
   } catch (e: any) {
     toast({
-      title: 'Помилка',
-      description: 'Такий користувач вже існує',
+      title: 'Error',
+      description: 'This user already exists.',
       variant: 'destructive',
       action: h(
         ToastAction,
-        { altText: 'Добре' },
-        { default: () => 'Закрити' }
+        { altText: 'Good' },
+        { default: () => 'Close' }
       ),
     });
   } finally {

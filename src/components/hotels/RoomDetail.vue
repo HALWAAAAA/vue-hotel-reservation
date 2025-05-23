@@ -94,8 +94,8 @@ function handleRoomFileUpload(event: Event) {
 async function uploadRoomImage() {
   if (!newRoomImageFile.value) {
     toast({
-      title: 'Помилка',
-      description: 'Виберіть фото для завантаження',
+      title: 'Error',
+      description: 'Choose a photo',
       variant: 'destructive',
     });
     return;
@@ -114,10 +114,13 @@ async function uploadRoomImage() {
     await updateRoomInFirestore({
       images: [...roomImages.value],
     });
-    toast({ title: 'Успіх', description: 'Фото завантажено' });
+    toast({ title: 'Good', description: 'Photo is downloaded' });
     newRoomImageFile.value = null;
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося завантажити фото' });
+    toast({
+      title: 'Error',
+      description: 'Smth went wrong with photo, try again',
+    });
   }
 }
 
@@ -142,11 +145,11 @@ async function removeRoomImage(index: number) {
     await updateRoomInFirestore({
       images: [...roomImages.value],
     });
-    toast({ title: 'Успіх', description: 'Фото видалено' });
+    toast({ title: 'Success', description: 'Photo is deleted' });
   } catch (error) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося видалити фото',
+      title: 'Error',
+      description: 'Photo is not deleted',
       variant: 'destructive',
     });
   }
@@ -161,10 +164,10 @@ async function updateRoom() {
       startDate: editFields.value.startDate,
       endDate: editFields.value.endDate,
     });
-    toast({ title: 'Успіх', description: 'Кімнату оновлено' });
+    toast({ title: 'Success', description: 'Room is changed' });
     dialogOpen.value = false;
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося оновити кімнату' });
+    toast({ title: 'Error', description: 'Room is not updated' });
   }
 }
 
@@ -192,10 +195,10 @@ async function deleteRoom() {
     await updateDoc(doc(db, 'hotels', props.hotelId), {
       rooms: updatedRooms,
     });
-    toast({ title: 'Успіх', description: 'Кімнату видалено' });
+    toast({ title: 'Success', description: 'Room is deleted' });
     emit('room-updated');
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося видалити кімнату' });
+    toast({ title: 'Error', description: 'Room is not deleted' });
   }
 }
 </script>
@@ -203,9 +206,9 @@ async function deleteRoom() {
 <template>
   <div v-if="room">
     <div class="space-y-1">
-      <p><strong>Тип розміщення:</strong> {{ room.accommodationType }}</p>
+      <p><strong>Accommodation Type:</strong> {{ room.accommodationType }}</p>
 
-      <p><strong>Ціна за ніч:</strong> {{ room.basePrice }}</p>
+      <p><strong>Price per night:</strong> {{ room.basePrice }}</p>
       <p><strong>Max guests:</strong> {{ room.maxGuests }}</p>
       <p>
         <strong>Available:</strong>
@@ -225,25 +228,23 @@ async function deleteRoom() {
     </div>
     <Dialog v-model:open="dialogOpen">
       <DialogTrigger as-child>
-        <Button variant="outline" class="mt-4"> Редагувати кімнату </Button>
+        <Button variant="outline" class="mt-4"> Change data room </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Редагувати кімнату</DialogTitle>
-          <DialogDescription>
-            Змініть потрібні поля та збережіть
-          </DialogDescription>
+          <DialogTitle>Change data room</DialogTitle>
+          <DialogDescription> Change and Submit </DialogDescription>
         </DialogHeader>
         <ScrollArea class="max-h-[50vh] pr-4">
           <form @submit.prevent="updateRoom" class="space-y-3 pb-6">
-            <Label for="accommodationType">Тип розміщення</Label>
+            <Label for="accommodationType">Accommodation Type</Label>
             <Input
               id="accommodationType"
               v-model="editFields.accommodationType"
               placeholder="Single / Deluxe"
             />
 
-            <Label for="basePrice">Ціна за ніч</Label>
+            <Label for="basePrice">Price per night</Label>
             <Input
               id="basePrice"
               type="number"
@@ -260,7 +261,7 @@ async function deleteRoom() {
             <Input type="date" v-model="editFields.endDate" />
 
             <div>
-              <Label>Фото</Label>
+              <Label>Photo</Label>
               <div class="flex flex-wrap gap-2 mt-1">
                 <div
                   v-for="(img, index) in roomImages"
@@ -284,12 +285,12 @@ async function deleteRoom() {
                 class="mt-2"
               />
               <Button type="button" @click="uploadRoomImage" class="mt-2">
-                Додати фото
+                Add photo
               </Button>
             </div>
 
             <DialogFooter class="pt-4">
-              <Button type="submit">Зберегти</Button>
+              <Button type="submit">Save</Button>
             </DialogFooter>
           </form>
         </ScrollArea>
@@ -297,7 +298,7 @@ async function deleteRoom() {
     </Dialog>
 
     <Button variant="destructive" class="mt-4" @click="deleteRoom">
-      Видалити кімнату
+      Delete room
     </Button>
   </div>
 </template>

@@ -16,8 +16,8 @@
           Showing {{ filteredHotels.length }} results
         </p>
         <div v-if="store.loading" class="flex justify-center py-16">
-        <Spinner class="h-12 w-12" />
-      </div>
+          <Spinner class="h-12 w-12" />
+        </div>
         <HotelList v-else :hotels="filteredHotels" />
       </div>
     </div>

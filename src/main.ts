@@ -15,5 +15,5 @@ app.use(VueFire, {
   modules: [VueFireFirestoreOptionsAPI(), VueFireAuth()],
 });
 app.use(pinia);
-app.component('Spinner', Spinner)
+app.component('Spinner', Spinner);
 app.mount('#app');

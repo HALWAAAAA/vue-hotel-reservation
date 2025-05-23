@@ -11,10 +11,10 @@ const store = useHotelStore();
 const { filters, allAmenities } = storeToRefs(store);
 const freeCancellation = computed<boolean>({
   get: () => filters.value.freeCancellation,
-  set: v => {
-    filters.value.freeCancellation = v
-  }
-})
+  set: (v) => {
+    filters.value.freeCancellation = v;
+  },
+});
 </script>
 
 <template>
@@ -64,9 +64,9 @@ const freeCancellation = computed<boolean>({
         </Label>
 
         <Label class="flex items-center gap-2 mt-2">
-  <Checkbox v-model="freeCancellation" />
-  Free Cancellation
-</Label>
+          <Checkbox v-model="freeCancellation" />
+          Free Cancellation
+        </Label>
       </div>
     </div>
   </aside>

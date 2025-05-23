@@ -90,13 +90,13 @@ const onFileChange = async (event: Event) => {
     const current = values.images || [];
     setFieldValue('images', [...current, downloadURL]);
     toast({
-      title: 'Фото додано!',
-      description: 'Посилання збережене у форму',
+      title: 'Photo is added!',
+      description: 'Link is saved to form',
     });
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося завантажити фото',
+      title: 'Error',
+      description: 'Photo is not downloaded',
       variant: 'destructive',
     });
   }
@@ -105,8 +105,8 @@ const onFileChange = async (event: Event) => {
 const onSubmit = handleSubmit(async (v) => {
   if (!v.startDate || !v.endDate) {
     toast({
-      title: 'Помилка',
-      description: 'Оберіть дати',
+      title: 'Error',
+      description: 'Choose a date',
       variant: 'destructive',
     });
     return;
@@ -123,13 +123,13 @@ const onSubmit = handleSubmit(async (v) => {
 
   try {
     await updateDoc(doc(db, 'hotels', hotelId), { rooms: arrayUnion(room) });
-    toast({ title: 'Успіх', description: 'Кімната додана' });
+    toast({ title: 'success', description: 'Room is added' });
     resetForm();
     router.push({ name: HOTEL_DETAILS_NAME, params: { id: hotelId } });
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося зберегти',
+      title: 'Error',
+      description: 'Data is not saved',
       variant: 'destructive',
     });
   }
@@ -140,7 +140,7 @@ const onSubmit = handleSubmit(async (v) => {
   <form @submit.prevent="onSubmit" class="space-y-6 p-4">
     <FormField v-slot="{ componentField }" name="accommodationType">
       <FormItem>
-        <FormLabel>Тип розміщення</FormLabel>
+        <FormLabel>Type accomodation</FormLabel>
         <FormControl>
           <Input placeholder="Single / Deluxe" v-bind="componentField" />
         </FormControl>
@@ -150,7 +150,7 @@ const onSubmit = handleSubmit(async (v) => {
 
     <FormField v-slot="{ componentField }" name="basePrice">
       <FormItem>
-        <FormLabel>Ціна за ніч</FormLabel>
+        <FormLabel>Price per night</FormLabel>
         <FormControl>
           <Input type="number" placeholder="300" v-bind="componentField" />
         </FormControl>
@@ -189,7 +189,7 @@ const onSubmit = handleSubmit(async (v) => {
     </FormField>
 
     <div>
-      <label class="block text-sm font-medium mb-1">Фото кімнати</label>
+      <label class="block text-sm font-medium mb-1">Photo of room</label>
       <input type="file" accept="image/*" @change="onFileChange" />
       <div class="grid grid-cols-2 gap-4 mt-2">
         <img
@@ -201,6 +201,6 @@ const onSubmit = handleSubmit(async (v) => {
       </div>
     </div>
 
-    <Button type="submit">Додати кімнату</Button>
+    <Button type="submit">Add a room</Button>
   </form>
 </template>

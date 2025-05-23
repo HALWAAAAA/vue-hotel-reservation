@@ -47,7 +47,7 @@
         <div class="text-right">
           <p class="text-sm text-gray-500">starting from</p>
           <p class="text-blue-600 font-semibold text-lg">
-            $ {{ hotel.fromPrice }}/night
+            zł {{ hotel.fromPrice }}/night
           </p>
           <RouterLink
             :to="{ name: USER_HOTEL_CARD_NAME, params: { id: hotel.id } }"

@@ -5,7 +5,6 @@ import { HOME_ROUTE, USER_TERMS_ROUTE } from '@/routerPath';
 <template>
   <footer class="bg-gray-50 text-gray-700 py-16 px-6 md:px-12">
     <div class="max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-      <!-- About -->
       <div>
         <h3 class="text-lg font-semibold mb-2">About</h3>
         <p class="font-semibold">Rareblocks</p>
@@ -30,7 +29,6 @@ import { HOME_ROUTE, USER_TERMS_ROUTE } from '@/routerPath';
         </div>
       </div>
 
-      <!-- Company -->
       <div>
         <h3 class="text-lg font-semibold mb-3">Company</h3>
         <ul class="space-y-2 text-sm">
@@ -41,24 +39,28 @@ import { HOME_ROUTE, USER_TERMS_ROUTE } from '@/routerPath';
         </ul>
       </div>
 
-      <!-- Help -->
       <div>
         <h3 class="text-lg font-semibold mb-3">Help</h3>
         <ul class="space-y-2 text-sm">
           <li>
-            <a :href="HOME_ROUTE" class="hover:text-cyan-500"
+            <a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500"
               >Customer Support</a
             >
           </li>
           <li><a href="#" class="hover:text-cyan-500">Delivery Details</a></li>
           <li>
-            <a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500">Terms & Conditions</a>
+            <a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500"
+              >Terms & Conditions</a
+            >
           </li>
-          <li><a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500">Privacy Policy</a></li>
+          <li>
+            <a :href="USER_TERMS_ROUTE" class="hover:text-cyan-500"
+              >Privacy Policy</a
+            >
+          </li>
         </ul>
       </div>
 
-      <!-- Resources -->
       <div>
         <h3 class="text-lg font-semibold mb-3">Resources</h3>
         <ul class="space-y-2 text-sm">

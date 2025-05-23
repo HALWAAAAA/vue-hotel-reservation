@@ -14,12 +14,12 @@
     <div v-if="auth.loading" class="flex items-center">
       <Spinner class="h-6 w-6" />
     </div>
-    
+
     <nav class="flex items-center space-x-6">
       <template v-if="!auth.isLoggedIn">
         <RouterLink
           :to="{ name: USER_LOGIN_NAME }"
-          class="hover:text-white/80 transition"
+          class="hover:text-cyan-300 transition cursor-pointer text-white"
         >
           Log In
         </RouterLink>

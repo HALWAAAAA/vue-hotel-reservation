@@ -1,4 +1,3 @@
-// src/components/hotels/columns.ts
 import type { ColumnDef, Row } from '@tanstack/vue-table';
 import type { Hotel } from './hotel';
 import DropdownAction from './DataTableDropDown.vue';
@@ -31,11 +30,11 @@ export const columns: ColumnDef<Hotel>[] = [
 
   {
     accessorKey: 'name',
-    header: 'Готель / Апартаменти',
+    header: 'Hotel',
   },
   {
     accessorKey: 'area',
-    header: 'Локація',
+    header: 'Area',
   },
   {
     accessorKey: 'email',
@@ -64,7 +63,6 @@ export const columns: ColumnDef<Hotel>[] = [
         h(DropdownAction, {
           hotel,
           onExpand: row.toggleExpanded,
-          // <- передаємо об'єкт hotel
         })
       );
     },

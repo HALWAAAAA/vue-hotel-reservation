@@ -14,21 +14,24 @@ import { defineStore } from 'pinia';
 
 export const useFavoriteStore = defineStore('favorites', () => {
   const favorites = ref<string[]>([]);
-  const loading = ref(false)
-  const error = ref<string | null>(null)
+  const loading = ref(false);
+  const error = ref<string | null>(null);
 
   async function loadFavorites(userId: string) {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
     try {
-      const q = query(collection(db, 'favorites'), where('userId', '==', userId))
-      const snap = await getDocs(q)
-      const ids = snap.docs.map(d => (d.data() as any).hotelId)
-  favorites.value = Array.from(new Set(ids))
+      const q = query(
+        collection(db, 'favorites'),
+        where('userId', '==', userId)
+      );
+      const snap = await getDocs(q);
+      const ids = snap.docs.map((d) => (d.data() as any).hotelId);
+      favorites.value = Array.from(new Set(ids));
     } catch (e) {
-      error.value = 'Failed to load favorites'
+      error.value = 'Failed to load favorites';
     } finally {
-      loading.value = false
+      loading.value = false;
     }
   }
 

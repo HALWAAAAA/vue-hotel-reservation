@@ -95,20 +95,13 @@ const deleteSelectedHotels = async () => {
 
   if (!selectedIds.length) {
     toast({
-      title: 'Нічого не вибрано',
-      description: 'Вибери готелі для видалення',
+      title: 'Nothing is choosed',
+      description: 'Choose a hotel to delete',
       variant: 'destructive',
-      action: h(
-        ToastAction,
-        { altText: 'Добре' },
-        { default: () => 'Закрити' }
-      ),
+      action: h(ToastAction, { altText: 'Good' }, { default: () => 'Close' }),
     });
     return;
   }
-
-  // const confirmed = window.confirm('Ти впевнений, що хочеш видалити вибрані готелі?');
-  // if (!confirmed) return;
 
   try {
     await Promise.all(
@@ -116,23 +109,19 @@ const deleteSelectedHotels = async () => {
     );
 
     toast({
-      title: 'Успіх',
-      description: 'Готелі видалено',
+      title: 'Success',
+      description: 'Hotels are deleted',
       variant: 'default',
     });
 
-    table.resetRowSelection(); // ⬅️ очищаємо вибрані рядки
+    table.resetRowSelection();
     emit('deleted', selectedIds);
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Щось пішло не так',
+      title: 'Error',
+      description: 'Smth went wrong',
       variant: 'destructive',
-      action: h(
-        ToastAction,
-        { altText: 'Добре' },
-        { default: () => 'Закрити' }
-      ),
+      action: h(ToastAction, { altText: 'Good' }, { default: () => 'Close' }),
     });
   }
 };
@@ -195,7 +184,6 @@ const deleteSelectedHotels = async () => {
       </Table>
     </div>
 
-    <!-- Pagination -->
     <div class="flex items-center justify-end space-x-2 py-4">
       <div class="flex-1 text-sm text-muted-foreground">
         {{ table.getFilteredSelectedRowModel().rows.length }} of
