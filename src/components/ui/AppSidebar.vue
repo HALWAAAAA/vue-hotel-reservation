@@ -19,7 +19,6 @@ import { USER_HOME_ROUTE, HOTEL_REQUESTS_ROUTE } from '@/routerPath';
 import { RouterLink } from 'vue-router';
 const props = defineProps<SidebarProps>();
 
-// This is sample data.
 const data = {
   versions: ['12.'],
   navMain: [

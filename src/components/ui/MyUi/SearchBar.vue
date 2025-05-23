@@ -19,15 +19,11 @@ const guests = ref(1);
 async function doSearch() {
   const loc = location.value.trim();
   if (!loc) {
-   toast({
-      title: 'Нічого не введено',
-      description: 'Введіть назву міста у Location',
+    toast({
+      title: 'Nothing to search',
+      description: 'Write a city',
       variant: 'destructive',
-      action: h(
-        ToastAction,
-        { altText: 'Добре' },
-        { default: () => 'Закрити' }
-      ),
+      action: h(ToastAction, { altText: 'Good' }, { default: () => 'Close' }),
     });
     return;
   }

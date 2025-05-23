@@ -59,9 +59,9 @@
           </div>
         </div>
 
-        
         <p v-if="!noOverlap && startDate && endDate" class="text-red-500">
-          Ці дати частково зайняті в іншій броні. Виберіть інший інтервал.
+          These dates are partially booked by another reservation. Please choose
+          a different time interval.
         </p>
 
         <Button

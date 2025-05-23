@@ -117,13 +117,13 @@ const onFileChange = async (event: Event) => {
     setFieldValue('images', [...current, downloadURL], true);
 
     toast({
-      title: 'Фото додано!',
-      description: 'Посилання збережене у форму',
+      title: 'Photo is added!',
+      description: 'Link is saved',
     });
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося завантажити фото',
+      title: 'Error',
+      description: 'Smth went wrong with photo',
       variant: 'destructive',
     });
   }
@@ -138,22 +138,18 @@ const onSubmit = handleSubmit(async (formValues) => {
       rooms: [],
     });
     toast({
-      title: 'Успіх!',
-      description: `Готель збережено з ID: ${docRef.id}`,
+      title: 'Good!',
+      description: `Hotel saves with ID: ${docRef.id}`,
       variant: 'default',
     });
     resetForm();
     router.push(HOME_ROUTE);
   } catch (err) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося зберегти готель. Спробуйте ще раз.',
+      title: 'Error',
+      description: 'Smth went wrong. Try again',
       variant: 'destructive',
-      action: h(
-        ToastAction,
-        { altText: 'Добре' },
-        { default: () => 'Закрити' }
-      ),
+      action: h(ToastAction, { altText: 'Good' }, { default: () => 'Close' }),
     });
   }
 });
@@ -163,7 +159,7 @@ const onSubmit = handleSubmit(async (formValues) => {
   <form @submit.prevent="onSubmit" class="space-y-6">
     <FormField v-slot="{ componentField }" name="name">
       <FormItem>
-        <FormLabel>Назва готелю</FormLabel>
+        <FormLabel>Hotels name</FormLabel>
         <FormControl
           ><Input placeholder="Nap. Golden Hotel" v-bind="componentField"
         /></FormControl>
@@ -173,7 +169,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField v-slot="{ componentField }" name="type">
       <FormItem>
-        <FormLabel>Тип</FormLabel>
+        <FormLabel>Type</FormLabel>
         <FormControl
           ><Input placeholder="Hotel / Apartment" v-bind="componentField"
         /></FormControl>
@@ -183,7 +179,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField v-slot="{ componentField }" name="description">
       <FormItem>
-        <FormLabel>Опис</FormLabel>
+        <FormLabel>Description</FormLabel>
         <FormControl
           ><Textarea
             placeholder="Короткий опис готелю..."
@@ -205,7 +201,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField v-slot="{ componentField }" name="phone">
       <FormItem>
-        <FormLabel>Телефон</FormLabel>
+        <FormLabel>Phone number</FormLabel>
         <FormControl
           ><Input placeholder="+48 123 456 789" v-bind="componentField"
         /></FormControl>
@@ -216,7 +212,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     <div class="grid grid-cols-2 gap-4">
       <FormField v-slot="{ componentField }" name="address">
         <FormItem>
-          <FormLabel>Адрес</FormLabel>
+          <FormLabel>Address</FormLabel>
           <FormControl
             ><Input
               placeholder="Lirowa 42, Warszawa, 02-641"
@@ -253,7 +249,7 @@ const onSubmit = handleSubmit(async (formValues) => {
               :checked="field.checked"
               @update:checked="(val: boolean) => field.checked = val"
             />
-            <span class="text-sm">Безкоштовне скасування до 24 годин</span>
+            <span class="text-sm">Free Cancellation Up to 24h</span>
           </div>
         </FormControl>
         <FormMessage />
@@ -262,7 +258,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField v-slot="{ componentField }" name="rating">
       <FormItem>
-        <FormLabel>Рейтинг</FormLabel>
+        <FormLabel>Rating</FormLabel>
         <FormControl
           ><Input
             type="number"
@@ -275,7 +271,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField v-slot="{ componentField }" name="numberOfReviews">
       <FormItem>
-        <FormLabel>Кількість відгуків</FormLabel>
+        <FormLabel>Reviews</FormLabel>
         <FormControl
           ><Input type="number" placeholder="0" v-bind="componentField"
         /></FormControl>
@@ -284,7 +280,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     <FormField name="amenities" v-slot>
       <FormItem>
-        <FormLabel>Зручності</FormLabel>
+        <FormLabel>Amenities</FormLabel>
         <FormControl>
           <div class="grid grid-cols-2 gap-2">
             <label
@@ -309,7 +305,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     </FormField>
 
     <div>
-      <label class="block text-sm font-medium mb-1">Фото готелю</label>
+      <label class="block text-sm font-medium mb-1">Hotels photo</label>
       <input type="file" accept="image/*" @change="onFileChange" />
       <div class="grid grid-cols-2 gap-4 mt-2">
         <img
@@ -321,6 +317,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       </div>
     </div>
 
-    <Button type="submit">Зберегти готель</Button>
+    <Button type="submit">Save a hotel</Button>
   </form>
 </template>

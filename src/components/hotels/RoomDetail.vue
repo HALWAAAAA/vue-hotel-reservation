@@ -94,8 +94,8 @@ function handleRoomFileUpload(event: Event) {
 async function uploadRoomImage() {
   if (!newRoomImageFile.value) {
     toast({
-      title: 'Помилка',
-      description: 'Виберіть фото для завантаження',
+      title: 'Error',
+      description: 'Choose a photo',
       variant: 'destructive',
     });
     return;
@@ -114,10 +114,13 @@ async function uploadRoomImage() {
     await updateRoomInFirestore({
       images: [...roomImages.value],
     });
-    toast({ title: 'Успіх', description: 'Фото завантажено' });
+    toast({ title: 'Good', description: 'Photo is downloaded' });
     newRoomImageFile.value = null;
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося завантажити фото' });
+    toast({
+      title: 'Error',
+      description: 'Smth went wrong with photo, try again',
+    });
   }
 }
 
@@ -142,11 +145,11 @@ async function removeRoomImage(index: number) {
     await updateRoomInFirestore({
       images: [...roomImages.value],
     });
-    toast({ title: 'Успіх', description: 'Фото видалено' });
+    toast({ title: 'Success', description: 'Photo is deleted' });
   } catch (error) {
     toast({
-      title: 'Помилка',
-      description: 'Не вдалося видалити фото',
+      title: 'Error',
+      description: 'Photo is not deleted',
       variant: 'destructive',
     });
   }
@@ -161,10 +164,10 @@ async function updateRoom() {
       startDate: editFields.value.startDate,
       endDate: editFields.value.endDate,
     });
-    toast({ title: 'Успіх', description: 'Кімнату оновлено' });
+    toast({ title: 'Success', description: 'Room is changed' });
     dialogOpen.value = false;
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося оновити кімнату' });
+    toast({ title: 'Error', description: 'Room is not updated' });
   }
 }
 
@@ -192,10 +195,10 @@ async function deleteRoom() {
     await updateDoc(doc(db, 'hotels', props.hotelId), {
       rooms: updatedRooms,
     });
-    toast({ title: 'Успіх', description: 'Кімнату видалено' });
+    toast({ title: 'Success', description: 'Room is deleted' });
     emit('room-updated');
   } catch (error) {
-    toast({ title: 'Помилка', description: 'Не вдалося видалити кімнату' });
+    toast({ title: 'Error', description: 'Room is not deleted' });
   }
 }
 </script>
@@ -230,9 +233,7 @@ async function deleteRoom() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Change data room</DialogTitle>
-          <DialogDescription>
-            Change and Submit
-          </DialogDescription>
+          <DialogDescription> Change and Submit </DialogDescription>
         </DialogHeader>
         <ScrollArea class="max-h-[50vh] pr-4">
           <form @submit.prevent="updateRoom" class="space-y-3 pb-6">

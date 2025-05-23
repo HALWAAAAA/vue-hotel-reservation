@@ -1,4 +1,3 @@
-// src/router.ts
 import { createRouter, createWebHistory } from 'vue-router';
 import { getCurrentUser } from 'vuefire';
 import { signOut } from 'firebase/auth';
@@ -43,7 +42,7 @@ import {
   USER_TERMS_NAME,
   USER_TERMS_ROUTE,
   USER_REVIEW_NAME,
-  USER_REVIEW_ROUTE
+  USER_REVIEW_ROUTE,
 } from './routerPath';
 import BookingPage from './pages/user/BookingPage.vue';
 import Requests from './pages/hotels/Requests.vue';
@@ -141,13 +140,13 @@ const routes = [
     path: USER_TERMS_ROUTE,
     name: USER_TERMS_NAME,
     component: Terms,
-    meta: { layout: 'user'},
+    meta: { layout: 'user' },
   },
   {
     path: USER_REVIEW_ROUTE,
     name: USER_REVIEW_NAME,
     component: Review,
-    meta: { layout: 'user', requiresAuth: true},
+    meta: { layout: 'user', requiresAuth: true },
   },
 ];
 

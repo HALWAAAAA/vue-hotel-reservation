@@ -114,7 +114,7 @@
               </a>
             </div>
             <AmenitiesList :amenities="hotel.amenities" />
-            <ReviewsSection class="mb-10"  :hotelId="route.params.id"/>
+            <ReviewsSection class="mb-10" :hotelId="route.params.id" />
           </div>
         </div>
       </div>
@@ -185,15 +185,12 @@ function swapImages(index: number) {
   mainImage.value = imageList.value[index];
   imageList.value[index] = temp;
 }
-  
+
 function goToBooking(room: any) {
   if (!authStore.isLoggedIn) {
     return router.push({ name: 'Login' });
   }
-  const loc =
-    (route.params.location as string) ||
-
-    store.filters.startDate
+  const loc = (route.params.location as string) || store.filters.startDate;
   router.push({
     name: USER_BOOK_NAME,
     params: {
@@ -207,11 +204,9 @@ function goToBooking(room: any) {
 const displayRooms = computed(() => {
   const rooms = hotel.value?.rooms ?? [];
   if (!desiredStart.value || !desiredEnd.value) {
-    
     return rooms;
   }
   return rooms.filter((r: any) => {
-    
     if (r.startDate && r.endDate) {
       if (desiredStart.value < r.startDate || desiredEnd.value > r.endDate) {
         return false;
@@ -219,7 +214,9 @@ const displayRooms = computed(() => {
     }
     const roomBookings = bookings.value.filter((b) => b.roomId === r.id);
     for (const b of roomBookings) {
-      const overlap = !(desiredEnd.value <= b.startDate || desiredStart.value >= b.endDate);
+      const overlap = !(
+        desiredEnd.value <= b.startDate || desiredStart.value >= b.endDate
+      );
       if (overlap) return false;
     }
     return true;

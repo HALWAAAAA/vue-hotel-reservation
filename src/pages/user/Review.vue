@@ -20,19 +20,15 @@
         <FormControl>
           <div class="flex gap-2">
             <label v-for="n in 5" :key="n" class="cursor-pointer">
-              <input
-                type="radio"
-                v-bind="field"
-                :value="n"
-                class="sr-only"
-              />
+              <input type="radio" v-bind="field" :value="n" class="sr-only" />
               <span
                 :class="{
                   'text-yellow-400': field.value >= n,
-                  'text-gray-300': field.value < n
+                  'text-gray-300': field.value < n,
                 }"
                 class="text-2xl"
-              >★</span>
+                >★</span
+              >
             </label>
           </div>
         </FormControl>
@@ -108,7 +104,7 @@ const onSubmit = handleSubmit(async ({ text, rating }) => {
     });
     toast({ title: 'Review submitted!' });
     resetForm();
-     router.back()
+    router.back();
   } catch {
     toast({
       title: 'Submission failed',
