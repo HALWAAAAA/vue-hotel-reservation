@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { getCurrentUser } from 'vuefire';
-import { signOut } from 'firebase/auth';
-import { auth } from './components/firebase';
 import Hotel from './pages/hotels/Hotel.vue';
 import HotelDetail from '@/pages/hotels/HotelDetail.vue';
 import FormRoom from '@/pages/hotels/FormRoom.vue';
@@ -11,7 +9,6 @@ import SearchResult from './pages/user/SearchResult.vue';
 import UserHotelDetail from './pages/user/UserHotelDetail.vue';
 import Register from './pages/user/Register.vue';
 import Login from './pages/user/Login.vue';
-import { useAuthStore } from './store/authStore';
 import {
   HOME_NAME,
   HOME_ROUTE,
@@ -43,6 +40,10 @@ import {
   USER_TERMS_ROUTE,
   USER_REVIEW_NAME,
   USER_REVIEW_ROUTE,
+  USER_PAYMENT_ROUTE,
+  USER_PAYMENT_NAME,
+  USER_PAYMENT_CONFIRMED_NAME,
+  USER_PAYMENT_CONFIRMED_ROUTE,
 } from './routerPath';
 import BookingPage from './pages/user/BookingPage.vue';
 import Requests from './pages/hotels/Requests.vue';
@@ -50,6 +51,8 @@ import ProfilePage from './pages/user/ProfilePage.vue';
 import FollowedPage from './pages/user/FollowedPage.vue';
 import Terms from './pages/user/Terms.vue';
 import Review from './pages/user/Review.vue';
+import PaymentPage from '@/pages/user/PaymentPage.vue';
+import PaymentConfirmedPage from '@/pages/user/PaymentConfirmedPage.vue';
 
 const routes = [
   {
@@ -148,6 +151,18 @@ const routes = [
     component: Review,
     meta: { layout: 'user', requiresAuth: true },
   },
+  {
+    path: USER_PAYMENT_ROUTE,
+    name: USER_PAYMENT_NAME,
+    component: PaymentPage,
+    meta: { layout: 'user', requiresAuth: true },
+  },
+  {
+    path: USER_PAYMENT_CONFIRMED_ROUTE,
+    name: USER_PAYMENT_CONFIRMED_NAME,
+    component: PaymentConfirmedPage,
+    meta: { layout: 'user', requiresAuth: true },
+  },
 ];
 
 export const router = createRouter({
@@ -156,14 +171,22 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const authStore = useAuthStore();
-
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    return { name: USER_LOGIN_NAME };
+  // routes with `meta: { requiresAuth: true }` will check for
+  // the users, others won't
+  if (to.meta.requiresAuth) {
+    const currentUser = await getCurrentUser()
+    // if the user is not logged in, redirect to the login page
+    if (!currentUser) {
+      return {
+        path: USER_LOGIN_ROUTE,
+        query: {
+          // we keep the current path in the query so we can
+          // redirect to it after login with
+          // `router.push(route.query.redirect || '/')`
+          redirect: to.fullPath,
+        },
+      }
+    }
   }
-  if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    return { name: USER_LOGIN_NAME };
-  }
-});
-
+})
 export default router;

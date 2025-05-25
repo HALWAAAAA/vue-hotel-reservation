@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import AdminLayout from './layouts/AdminLayout.vue';
-import UserLayout from './layouts/UserLayout.vue';
+import AdminLayout from '@/layouts/AdminLayout.vue';
+import UserLayout from '@/layouts/UserLayout.vue';
 import Toaster from '@/components/ui/toast/Toaster.vue';
 
 const route = useRoute();

@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="min-h-screen flex flex-col">
     <component :is="isHome ? HeaderUser : HeaderMain" :key="route.name" />
-
-    <router-view />
+    <div class="flex-1">
+      <router-view />
+    </div>
 
     <Footer />
   </div>
