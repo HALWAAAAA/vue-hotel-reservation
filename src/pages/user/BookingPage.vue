@@ -3,7 +3,7 @@
     class="max-w-6xl mx-auto py-8 px-4 grid grid-cols-1 lg:grid-cols-3 gap-6"
   >
     <div v-if="loading" class="text-center py-20">Loading hotel...</div>
-    <div v-else-if="hotel">
+    <template v-else-if="hotel">
       <div class="lg:col-span-2 space-y-6">
         <div class="p-6 bg-white rounded-lg shadow">
           <h2 class="text-xl font-semibold mb-2">
@@ -101,7 +101,7 @@
           </dl>
         </div>
       </div>
-    </div>
+    </template>
     <div v-else class="text-center py-20">Hotel not found.</div>
   </div>
 </template>
@@ -113,14 +113,12 @@ import { useHotelStore } from '@/store/hotelStore';
 import { useAuthStore } from '@/store/authStore';
 import {
   collection,
-  addDoc,
   getDocs,
   query,
   where,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/components/firebase';
-import { USER_HOME_NAME, USER_LOGIN_NAME } from '@/routerPath';
+import { /* USER_HOME_NAME, */ USER_LOGIN_NAME, USER_PAYMENT_NAME } from '@/routerPath';
 import Button from '@/components/ui/button/Button.vue';
 
 const route = useRoute();
@@ -193,27 +191,23 @@ async function book() {
     return router.push({ name: USER_LOGIN_NAME });
   }
   const user = unref(authStore.user);
-  if (!user) {
+  if (!user || !user.email) {
     return router.push({ name: USER_LOGIN_NAME });
   }
   if (!canBook.value) return;
 
-  loading.value = true;
-  try {
-    await addDoc(collection(db, 'bookings'), {
-      userId: user.uid,
-      hotelId,
-      roomId,
+  router.push({
+    name: USER_PAYMENT_NAME,
+    query: {
+      hotelId: hotelId,
+      roomId: roomId,
       startDate: startDate.value,
       endDate: endDate.value,
       guests: guests.value,
       nights: nights.value,
       total: total.value,
-      createdAt: serverTimestamp(),
-    });
-    router.push({ name: USER_HOME_NAME });
-  } finally {
-    loading.value = false;
-  }
+      customerEmail: user.email,
+    },
+  });
 }
 </script>

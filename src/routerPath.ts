@@ -42,3 +42,9 @@ export const USER_TERMS_ROUTE = '/home/terms';
 
 export const USER_REVIEW_NAME = 'Review';
 export const USER_REVIEW_ROUTE = '/home/:hotelId/review';
+
+export const USER_PAYMENT_NAME = 'UserPayment';
+export const USER_PAYMENT_ROUTE = '/payment';
+
+export const USER_PAYMENT_CONFIRMED_NAME = 'UserPaymentConfirmed';
+export const USER_PAYMENT_CONFIRMED_ROUTE = '/payment-confirmed';
