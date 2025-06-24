@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
-import { useCurrentUser } from 'vuefire';
+
 import { computed, ref, watch } from 'vue';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/components/firebase';
-import router from '@/router';
+
 import { USER_HOME_NAME } from '@/routerPath';
 import { useFavoriteStore } from './favoriteStore';
-
+let router: any;
 export const useAuthStore = defineStore('auth', () => {
-  const user = useCurrentUser();
+  const user = ref<any>(null);
   const loading = ref(true);
   const isLoggedIn = computed(() => !!user.value);
   const isAdmin = ref(false);
@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
+    if (!router) router = (await import('@/router')).default;
     try {
       await signOut(auth);
       isAdmin.value = false;

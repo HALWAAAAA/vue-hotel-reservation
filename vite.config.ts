@@ -4,8 +4,8 @@ import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-    base: '/vue-hotel-reservation/',
+export default defineConfig(({ mode }: { mode: string }) => ({
+  base: mode === 'production' ? '/vue-hotel-reservation/' : '/',
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()],
@@ -17,4 +17,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+}))
