@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const getImage = (file: string) => `${import.meta.env.BASE_URL}${file}`;
 
 const testimonials = [
