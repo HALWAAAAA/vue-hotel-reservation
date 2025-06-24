@@ -29,7 +29,7 @@ const places = [
         >
           <div class="rounded-lg overflow-hidden shadow-md relative group">
             <img
-              :src="`/cards/${place.image}`"
+              :src="`${import.meta.env.BASE_URL}cards/${place.image}`"
               :alt="place.name"
               class="w-full h-72 object-cover"
             />
