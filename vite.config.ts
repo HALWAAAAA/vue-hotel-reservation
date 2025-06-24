@@ -5,6 +5,7 @@ import tailwind from 'tailwindcss'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+    base: '/vue-hotel-reservation/',
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()],
