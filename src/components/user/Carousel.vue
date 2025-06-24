@@ -14,6 +14,9 @@ const places = [
   { name: 'Warsaw', desc: 'Amazing streets', image: 'warsaw.jpg' },
   { name: 'Berlin', desc: 'Amazing streets', image: 'berlin.jpg' },
 ];
+
+const getImageUrl = (image: string) => `${import.meta.env.BASE_URL}cards/${image}`;
+
 </script>
 
 <template>
@@ -29,8 +32,8 @@ const places = [
         >
           <div class="rounded-lg overflow-hidden shadow-md relative group">
             <img
-              :src="`${import.meta.env.BASE_URL}cards/${place.image}`"
-              :alt="place.name"
+              :src="getImageUrl(place.image)" :alt="place.name"
+              
               class="w-full h-72 object-cover"
             />
             <div
