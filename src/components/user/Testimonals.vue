@@ -1,23 +1,25 @@
 <script setup>
+const getImage = (file: string) => `${import.meta.env.BASE_URL}${file}`;
+
 const testimonials = [
   {
     name: 'Janet House',
-    image: '/woman.jpg',
+    image: getImage('woman.jpg'),
     text: '“We love Landingfolio! Our designers were using it for their projects, so we already knew what kind of design they want.”',
   },
   {
     name: 'James Scott',
-    image: '/man.jpg',
+    image: getImage('man.jpg'),
     text: '“We love Landingfolio! Our designers were using it for their projects, so we already knew what kind of design they want.”',
   },
   {
     name: 'James Scott',
-    image: '/man.jpg',
+    image: getImage('man.jpg'),
     text: '“We love Landingfolio! Our designers were using it for their projects, so we already knew what kind of design they want.”',
   },
   {
     name: 'James Scott',
-    image: '/man.jpg',
+    image: getImage('man.jpg'),
     text: '“We love Landingfolio! Our designers were using it for their projects, so we already knew what kind of design they want.”',
   },
 ];
